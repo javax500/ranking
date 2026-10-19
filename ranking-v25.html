@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Rankings</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --accent:#D4AF37; --accent-dim:#9a7e26;
+  --bg:#0a0a0c; --surface:#111115; --surface2:#1a1a22; --surface3:#22222e;
+  --text:#f0eee8; --text-dim:#888890; --border:#2a2a38; --danger:#c0392b;
+  --cat-accent:#D4AF37;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ══ HOME ══ */
+#home{align-items:center;justify-content:flex-start;padding-bottom:80px;}
+.hero{width:100%;background:linear-gradient(160deg,#0d0d14 0%,#1a1520 50%,#0d0d14 100%);border-bottom:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px 44px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(212,175,55,0.07) 0%,transparent 70%);pointer-events:none;}
+.logo-slot{width:clamp(340px,55vw,620px);min-height:200px;border:2px dashed var(--accent-dim);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:border-color .25s;}
+.logo-slot.has-img{border-style:solid;border-color:transparent;}
+.logo-slot:hover{border-color:var(--accent);}
+.logo-slot img{width:100%;height:100%;object-fit:contain;display:block;}
+.logo-slot .upload-hint{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--accent-dim);font-size:13px;pointer-events:none;padding:30px;}
+.logo-slot .upload-hint svg{width:40px;height:40px;}
+#logo-input{display:none;}
+
+.hero-subtitle{font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,3.5vw,34px);letter-spacing:8px;color:var(--accent-dim);margin-top:20px;text-transform:uppercase;cursor:text;outline:none;border-bottom:1px dashed transparent;padding:2px 4px;transition:border-color .2s, color .2s;}
+.hero-subtitle:focus{border-color:var(--accent-dim);}
+.hero-subtitle:hover{border-color:var(--border);}
+.hero-subtitle-edit{background:none;border:none;cursor:pointer;margin-left:8px;font-size:14px;color:var(--text-dim);vertical-align:middle;transition:color .15s;}
+.hero-subtitle-edit:hover{color:var(--accent);}
+
+.home-section-label{display:flex;align-items:center;gap:12px;margin-top:40px;margin-bottom:24px;padding:0 40px;width:100%;max-width:1200px;}
+.home-section-text{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:5px;color:var(--text-dim);text-transform:uppercase;cursor:text;outline:none;border-bottom:1px dashed transparent;padding:2px 4px;transition:border-color .2s;}
+.home-section-text:focus{border-color:var(--text-dim);}
+.home-section-text:hover{border-color:var(--border);}
+
+/* Labels pill grid — same as home-grid */
+.labels-pill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px;width:100%;}
+
+/* Collections grid */
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:24px;padding:0 40px;width:100%;max-width:1200px;}
+
+/* Nav cards (collections & sections) */
+.nav-card{aspect-ratio:3/4;border-radius:14px;overflow:hidden;position:relative;cursor:pointer;border:1px solid var(--border);background:var(--surface2);transition:transform .25s,border-color .25s,box-shadow .25s;}
+.nav-card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 14px 44px rgba(0,0,0,.55);}
+.nav-card .nc-img{width:100%;height:100%;object-fit:cover;display:block;}
+.nav-card .nc-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-size:52px;}
+.nav-card .nc-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,0) 55%);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:18px;}
+.nav-card .nc-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--text);text-align:center;}
+.nav-card .nc-count{font-size:11px;color:var(--cat-accent);margin-top:4px;letter-spacing:1px;}
+.nc-edit-btn{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.72);border:1px solid var(--border);color:var(--text-dim);display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;transition:color .2s,border-color .2s;z-index:10;}
+.nc-edit-btn:hover{color:var(--cat-accent);border-color:var(--cat-accent);}
+.add-nav-btn{aspect-ratio:3/4;border-radius:14px;border:2px dashed var(--border);background:transparent;color:var(--text-dim);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;font-size:12px;letter-spacing:1px;transition:border-color .25s,color .25s;font-family:'Inter',sans-serif;}
+.add-nav-btn:hover{border-color:var(--cat-accent);color:var(--cat-accent);}
+.add-nav-btn svg{width:30px;height:30px;}
+
+/* ══ PAGE HEADER ══ */
+.page-header{background:var(--surface);border-bottom:1px solid var(--border);border-top:3px solid var(--cat-accent);padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:100;}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:var(--cat-accent);flex:1;min-width:80px;}
+.breadcrumb{width:100%;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);padding-bottom:2px;flex-wrap:wrap;}
+.breadcrumb span{cursor:pointer;transition:color .15s;}
+.breadcrumb span:hover{color:var(--cat-accent);}
+.breadcrumb .sep{opacity:.4;cursor:default;}
+.breadcrumb .current{color:var(--text-dim);cursor:default;}
+.back-btn{background:none;border:1px solid var(--border);color:var(--text-dim);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:5px;transition:color .2s,border-color .2s;font-family:'Inter',sans-serif;white-space:nowrap;}
+.back-btn:hover{color:var(--text);border-color:var(--text-dim);}
+.page-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+/* Tabs (Cards / Labels) */
+.page-tabs{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:3px;}
+.tab-btn{background:none;border:none;color:var(--text-dim);padding:5px 14px;border-radius:7px;cursor:pointer;font-size:12px;font-family:'Inter',sans-serif;transition:background .15s,color .15s;white-space:nowrap;}
+.tab-btn.active{background:var(--surface3);color:var(--cat-accent);}
+
+.ctrl-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;display:flex;align-items:center;gap:5px;transition:color .2s,border-color .2s,background .2s;font-family:'Inter',sans-serif;white-space:nowrap;}
+.ctrl-btn:hover,.ctrl-btn.active{background:var(--surface3);color:var(--cat-accent);border-color:var(--cat-accent);}
+.icon-btn-row{display:flex;gap:8px;}
+.icon-btn{width:38px;height:38px;flex:none;background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:color .2s,border-color .2s,background .2s,transform .15s;}
+.icon-btn:hover{background:var(--surface3);color:var(--accent);border-color:var(--accent);transform:translateY(-1px);}
+.icon-btn.danger:hover{color:var(--danger);border-color:var(--danger);}
+.icon-btn svg{width:16px;height:16px;pointer-events:none;}
+.color-btn{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0;overflow:hidden;position:relative;flex-shrink:0;transition:border-color .2s;}
+.color-btn:hover{border-color:var(--text-dim);}
+.color-btn input[type="color"]{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);opacity:0;cursor:pointer;}
+
+/* Sort buttons */
+.sort-group{display:flex;gap:4px;}
+.sort-chip{background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:8px;cursor:pointer;font-size:11px;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;}
+.sort-chip:hover{color:var(--cat-accent);border-color:var(--cat-accent);}
+.sort-chip.active{background:var(--surface3);color:var(--cat-accent);border-color:var(--cat-accent);}
+
+.add-primary-btn{background:var(--cat-accent);border:none;color:#000;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px;transition:filter .15s;font-family:'Inter',sans-serif;white-space:nowrap;}
+.add-primary-btn:hover{filter:brightness(1.15);}
+
+/* ══ CARDS GRID ══ */
+.cards-page{flex:1;padding:24px;overflow-y:auto;}
+.coll-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--grid-min,160px),1fr));gap:14px;align-items:start;}
+.card-item{position:relative;border-radius:10px;overflow:hidden;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;user-select:none;}
+.card-item:hover{border-color:var(--cat-accent);box-shadow:0 6px 28px rgba(0,0,0,.5);}
+.card-item.dragging{opacity:.35;transform:scale(.96);cursor:grabbing;}
+.card-item.drag-over{border-color:var(--cat-accent);box-shadow:0 0 0 2px var(--cat-accent);}
+.card-item img{width:100%;height:auto;display:block;pointer-events:none;}
+.card-rank{position:absolute;top:6px;left:6px;background:var(--cat-accent);color:#000;font-family:'Bebas Neue',sans-serif;font-size:15px;min-width:26px;height:26px;border-radius:13px;padding:0 5px;display:flex;align-items:center;justify-content:center;}
+.card-actions{position:absolute;top:6px;right:6px;display:flex;flex-direction:column;gap:4px;opacity:0;transition:opacity .2s;}
+.card-item:hover .card-actions{opacity:1;}
+.card-act-btn{width:26px;height:26px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:background .15s;}
+.card-act-btn.delete{background:rgba(192,57,43,.85);color:#fff;}
+.card-act-btn.delete:hover{background:var(--danger);}
+.card-act-btn.edit{background:rgba(30,30,42,.85);color:var(--text-dim);border:1px solid var(--border);}
+.card-act-btn.edit:hover{color:var(--accent);}
+.card-drag-handle{position:absolute;bottom:6px;right:6px;width:22px;height:22px;border-radius:5px;background:rgba(0,0,0,.6);color:var(--text-dim);display:flex;align-items:center;justify-content:center;font-size:11px;opacity:0;transition:opacity .2s;cursor:grab;}
+.card-item:hover .card-drag-handle{opacity:.7;}
+.empty-state{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;color:var(--text-dim);gap:14px;font-size:14px;text-align:center;}
+.empty-state svg{width:48px;height:48px;opacity:.35;}
+
+/* ══ LABELS TAB ══ */
+.labels-view{padding:24px;flex:1;overflow-y:auto;}
+.labels-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.labels-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--cat-accent);}
+.label-type-name{font-size:12px;color:var(--text-dim);margin-top:2px;}
+.label-type-name span{color:var(--text);cursor:pointer;border-bottom:1px dashed var(--border);padding-bottom:1px;}
+.label-type-name span:hover{color:var(--cat-accent);}
+
+.labels-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
+.label-chip{background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12px;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.label-chip:hover{border-color:var(--cat-accent);color:var(--cat-accent);}
+.label-chip.active{background:var(--cat-accent);color:#000;border-color:var(--cat-accent);}
+.label-chip .chip-count{font-size:10px;opacity:.7;}
+.label-chip .chip-del{opacity:.5;font-size:11px;transition:opacity .15s;}
+.label-chip:hover .chip-del{opacity:1;}
+.add-label-chip{background:none;border:1px dashed var(--border);color:var(--text-dim);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12px;transition:all .15s;font-family:'Inter',sans-serif;}
+.add-label-chip:hover{border-color:var(--cat-accent);color:var(--cat-accent);}
+
+.label-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;align-items:start;}
+.lcard{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:border-color .2s;}
+.lcard:hover{border-color:var(--cat-accent);}
+.lcard img{width:100%;height:auto;display:block;}
+.lcard .lcard-check{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.7);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;}
+.lcard.selected .lcard-check{background:var(--cat-accent);border-color:var(--cat-accent);color:#000;}
+
+/* ══ LIGHTBOX ══ */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;align-items:center;justify-content:center;padding:20px;perspective:1600px;}
+#lightbox.open{display:flex;}
+.lightbox-card{position:relative;transform-style:preserve-3d;transform:rotateX(0deg) rotateY(0deg) scale(1);transition:transform .6s cubic-bezier(.23,1,.32,1);will-change:transform;border-radius:12px;}
+.lightbox-card.tilting{transition:transform .08s linear;}
+#lightbox-img{display:block;width:100%;height:100%;object-fit:contain;border-radius:10px;box-shadow:0 20px 80px rgba(0,0,0,.8);pointer-events:none;}
+.lightbox-glare{position:absolute;inset:0;border-radius:10px;pointer-events:none;opacity:0;transition:opacity .4s;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.45) 0%,rgba(255,255,255,.12) 25%,rgba(255,255,255,0) 55%),linear-gradient(115deg,transparent 30%,rgba(212,175,55,.18) 45%,rgba(255,255,255,.25) 50%,rgba(212,175,55,.18) 55%,transparent 70%);background-size:100% 100%,220% 220%;background-position:center,var(--mx,50%) var(--my,50%);mix-blend-mode:overlay;}
+.lightbox-card.tilting .lightbox-glare{opacity:1;}
+#lightbox-close{position:fixed;top:20px;right:24px;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2001;}
+#lightbox-close:hover{background:rgba(255,255,255,.22);}
+#lightbox-flip-btn{position:fixed;top:20px;left:24px;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:19px;width:40px;height:40px;border-radius:50%;cursor:pointer;align-items:center;justify-content:center;z-index:2001;transition:background .15s,transform .2s;}
+#lightbox-flip-btn:hover{background:rgba(255,255,255,.22);transform:rotate(25deg);}
+#lightbox-prev-card,#lightbox-next-card{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:#fff;font-size:22px;width:46px;height:46px;border-radius:50%;cursor:pointer;align-items:center;justify-content:center;z-index:2001;transition:background .15s;}
+#lightbox-prev-card{left:24px;}
+#lightbox-next-card{right:24px;}
+#lightbox-prev-card:hover,#lightbox-next-card:hover{background:rgba(255,255,255,.24);}
+
+/* ══ CARD FLIP (reverso) ══ */
+.flip-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.45,.05,.15,1);}
+.flip-inner.flipped{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;overflow:hidden;}
+.card-face.card-back{transform:rotateY(180deg);background-size:cover;background-position:center;background-color:#111;display:flex;flex-direction:column;align-items:stretch;gap:10px;padding:22px 18px;box-shadow:0 20px 80px rgba(0,0,0,.8);}
+.back-index{flex:1;display:flex;flex-direction:column;gap:12px;overflow:hidden;}
+.back-strip-item{width:100%;flex-shrink:0;cursor:pointer;}
+.back-strip-inner{border-radius:8px;overflow:hidden;transition:box-shadow .15s;}
+.back-strip-item:hover .back-strip-inner{box-shadow:0 8px 22px rgba(0,0,0,.55);}
+.back-strip-item img{width:100%;height:auto;display:block;transition:transform .2s ease;}
+.back-strip-item:hover img{transform:scale(1.025);}
+.back-index-empty{margin:auto;color:rgba(255,255,255,.55);font-size:13px;text-align:center;padding:20px;}
+.back-nav{display:none;align-items:center;justify-content:space-between;flex-shrink:0;padding-top:2px;}
+.back-nav-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.14);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:background .15s,opacity .15s;}
+.back-nav-btn:hover{background:rgba(255,255,255,.26);}
+.back-nav-btn:disabled{opacity:.22;cursor:default;pointer-events:none;}
+.back-nav-dots{font-size:11px;color:rgba(255,255,255,.65);letter-spacing:1px;}
+
+/* ══ EDIT CARD — SUBCARDS (índice de temporadas) ══ */
+.subcard-row{border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;background:var(--surface2);}
+.subcard-row-top{display:flex;gap:8px;align-items:center;}
+.subcard-row-top input[type="text"]{flex:1;background:var(--surface3);border:1px solid var(--border);color:#fff;padding:7px 10px;border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;outline:none;}
+.sc-mini-btn{width:26px;height:26px;flex:none;border-radius:6px;border:1px solid var(--border);background:var(--surface3);color:var(--text-dim);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:color .15s,border-color .15s;}
+.sc-mini-btn:hover{color:var(--ec-accent,var(--accent));border-color:var(--ec-accent,var(--accent));}
+.sc-uploads-row{display:flex;gap:8px;}
+.sc-upload{flex:1;border:1.5px dashed var(--border);border-radius:8px;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text-dim);font-size:10px;text-align:center;padding:6px;transition:border-color .2s;overflow:hidden;}
+.sc-upload:hover{border-color:var(--accent-dim);}
+.sc-upload.strip{height:44px;}
+.sc-upload.full{height:78px;}
+.sc-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.sc-upload img{max-width:100%;max-height:100%;object-fit:contain;display:block;position:absolute;inset:0;width:100%;height:100%;}
+.sc-upload span{position:relative;z-index:1;pointer-events:none;padding:0 4px;}
+#lightbox-name{display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);color:var(--text);padding:6px 16px;border-radius:20px;font-size:13px;letter-spacing:.5px;white-space:nowrap;overflow:hidden;isolation:isolate;}
+#lightbox-name::after{content:'';position:absolute;top:0;left:var(--shine,-40%);width:35%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),rgba(212,175,55,.5),transparent);transform:skewX(-22deg);opacity:0;transition:opacity .35s;pointer-events:none;}
+#lightbox-name.shining::after{opacity:1;}
+
+/* ══ MODALS ══ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px;width:100%;max-width:460px;position:relative;max-height:90vh;overflow-y:auto;}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--accent);margin-bottom:18px;}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-dim);font-size:18px;cursor:pointer;transition:color .15s;}
+.modal-close:hover{color:var(--text);}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:11px;color:var(--text-dim);margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase;}
+.form-group input[type="text"]{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+.form-group input[type="text"]:focus{border-color:var(--accent-dim);}
+.form-group input[type="number"]{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+.form-group input[type="number"]:focus{border-color:var(--accent-dim);}
+.range-row{display:flex;align-items:center;gap:10px;}
+.range-row input[type="range"]{flex:1;accent-color:var(--accent);cursor:pointer;}
+.range-val{font-size:12px;color:var(--accent);min-width:32px;text-align:right;font-weight:600;}
+.img-upload-area{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;color:var(--text-dim);font-size:12px;transition:border-color .2s;position:relative;}
+.img-upload-area:hover{border-color:var(--accent-dim);}
+.img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.img-upload-area .preview-thumb{width:100%;max-height:130px;object-fit:contain;border-radius:6px;margin-bottom:8px;display:none;}
+.modal-actions{display:flex;gap:8px;margin-top:20px;justify-content:flex-end;}
+.btn-primary{background:var(--accent);border:none;color:#000;padding:9px 18px;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;font-family:'Inter',sans-serif;transition:filter .15s;}
+.btn-primary:hover{filter:brightness(1.1);}
+.btn-secondary{background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);padding:9px 18px;border-radius:8px;cursor:pointer;font-size:12px;font-family:'Inter',sans-serif;transition:color .15s;}
+.btn-secondary:hover{color:var(--text);}
+.btn-danger{background:none;border:1px solid var(--danger);color:var(--danger);padding:9px 18px;border-radius:8px;cursor:pointer;font-size:12px;font-family:'Inter',sans-serif;margin-right:auto;transition:background .15s;}
+.btn-danger:hover{background:rgba(192,57,43,.15);}
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s;}
+.swatch:hover,.swatch.active{transform:scale(1.2);border-color:#fff;}
+.upload-list{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:7px;max-height:240px;overflow-y:auto;}
+.upload-list li{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;}
+.upload-list li img{width:34px;height:50px;object-fit:cover;border-radius:4px;flex-shrink:0;}
+.upload-list li .uname{flex:1;font-size:12px;color:var(--text-dim);word-break:break-all;line-height:1.4;}
+.upload-list li .uname span{display:block;color:var(--text);font-size:12px;margin-bottom:2px;}
+.upload-list li button{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:15px;transition:color .15s;}
+.upload-list li button:hover{color:var(--danger);}
+.inline-color-row{display:flex;align-items:center;gap:8px;margin-top:8px;}
+
+/* subtitle color picker inline */
+.hero-subtitle:hover::after{
+  content:'clic: editar · clic derecho: color';
+  position:absolute;left:50%;transform:translateX(-50%);
+  bottom:-22px;font-size:10px;color:var(--text-dim);
+  letter-spacing:1px;white-space:nowrap;pointer-events:none;
+  font-family:'Inter',sans-serif;text-transform:none;
+}
+.subtitle-wrap{position:relative;display:inline-block;}
+.subtitle-color-btn{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);cursor:pointer;overflow:hidden;position:relative;flex-shrink:0;}
+.subtitle-color-btn input{position:absolute;inset:-4px;opacity:0;cursor:pointer;width:calc(100%+8px);height:calc(100%+8px);}
+
+/* ══ LABEL NAV CARDS ══ */
+/* labels-pill-grid defined in home section */
+.label-nav-card{aspect-ratio:3/4;border-radius:14px;overflow:hidden;position:relative;cursor:pointer;border:2px solid color-mix(in srgb,var(--lc) 40%,transparent);background:color-mix(in srgb,var(--lc) 8%,var(--surface2));transition:transform .22s,border-color .22s,box-shadow .22s;}
+.label-nav-card:hover{transform:translateY(-5px) scale(1.02);box-shadow:0 12px 36px rgba(0,0,0,.5);}
+.lnc-img{width:100%;height:100%;object-fit:cover;display:block;}
+.lnc-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:46px;}
+.lnc-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.85) 0%,rgba(0,0,0,0) 55%);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:14px;}
+.lnc-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--lc,#fff);text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.8);}
+.lnc-count{font-size:10px;color:var(--lc,#888);margin-top:3px;opacity:.8;}
+.lnc-actions{position:absolute;top:7px;right:7px;display:flex;flex-direction:column;gap:4px;opacity:0;transition:opacity .18s;}
+.label-nav-card:hover .lnc-actions{opacity:1;}
+.lnc-edit-btn,.lnc-del-btn{width:24px;height:24px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:background .15s;}
+.lnc-edit-btn{background:rgba(30,30,42,.85);color:var(--text-dim);}
+.lnc-edit-btn:hover{color:var(--accent);}
+.lnc-del-btn{background:rgba(192,57,43,.8);color:#fff;}
+.lnc-del-btn:hover{background:var(--danger);}
+.label-add-btn{aspect-ratio:3/4 !important;}
+
+/* Fix rating buttons — force all 10 in one row */
+.ec-rating-nums{display:flex;gap:3px;justify-content:center;width:100%;}
+.ec-rating-btn{flex:1;min-width:0;height:34px;border-radius:8px;border:2px solid transparent;cursor:pointer;font-size:11px;font-weight:700;font-family:'Inter',sans-serif;transition:transform .1s,border-color .15s;display:flex;align-items:center;justify-content:center;}
+
+/* ══ DATE SPINNERS ══ */
+.ec-spinners{display:grid;grid-template-columns:1fr 1.6fr 1.4fr;gap:10px;margin-top:6px;}
+.ec-spinner-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.ec-spinner-label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;}
+.ec-spinner-box{display:flex;flex-direction:column;align-items:center;background:var(--surface3);border:1px solid var(--border);border-radius:10px;overflow:hidden;width:100%;}
+.ec-spin-btn{background:none;border:none;color:var(--text-dim);cursor:pointer;width:100%;padding:5px 0;font-size:10px;transition:background .13s,color .13s;line-height:1;}
+.ec-spin-btn:hover{background:rgba(255,255,255,.07);color:var(--ec-accent,var(--accent));}
+.ec-spin-input{background:none;border:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);color:#fff;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;text-align:center;width:100%;padding:6px 2px;outline:none;}
+.ec-spin-input::placeholder{color:var(--text-dim);font-weight:400;font-size:12px;}
+
+/* Label image upload — fixed square in modal */
+.label-img-upload-wrap{position:relative;width:140px;height:140px;margin:4px auto 0;border:2px dashed var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.label-img-upload-wrap:hover{border-color:var(--accent-dim);}
+.label-img-upload-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.label-img-upload-wrap .limg-hint{display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--text-dim);font-size:11px;pointer-events:none;text-align:center;padding:8px;}
+.label-img-upload-wrap input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+
+/* label detail uses coll-grid – no extra CSS needed */
+/* Label nav card image: square 1:1 */
+.lnc-img{width:100%;height:100%;object-fit:cover;display:block;}
+.lnc-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:46px;}
+.sort-pair{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:4px 8px;}
+.sort-pair-label{font-size:11px;color:var(--text-dim);letter-spacing:.3px;}
+.sort-arrows{display:flex;flex-direction:column;gap:1px;}
+.sort-arrow{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:9px;line-height:1;padding:1px 3px;border-radius:3px;transition:color .15s,background .15s;}
+.sort-arrow:hover{color:var(--cat-accent);background:var(--surface3);}
+.sort-arrow.active{color:var(--cat-accent);background:var(--surface3);}
+
+/* ══ LABELS PILL GRID ══ */
+/* labels-pill-grid flex removed */
+.label-pill{display:flex;align-items:center;gap:10px;padding:14px 20px;border-radius:50px;border:2px solid transparent;cursor:pointer;transition:transform .18s,box-shadow .18s,filter .18s;position:relative;min-width:120px;}
+.label-pill:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 6px 22px rgba(0,0,0,.4);filter:brightness(1.1);}
+.label-pill-name{font-size:14px;font-weight:600;letter-spacing:.4px;}
+.label-pill-count{font-size:11px;opacity:.7;margin-left:auto;padding-left:10px;}
+.label-pill-del{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;cursor:pointer;}
+.label-pill:hover .label-pill-del{opacity:1;}
+.add-label-pill{display:flex;align-items:center;gap:8px;padding:14px 20px;border-radius:50px;border:2px dashed var(--border);cursor:pointer;font-size:13px;color:var(--text-dim);background:none;font-family:'Inter',sans-serif;transition:border-color .2s,color .2s;}
+.add-label-pill:hover{border-color:var(--cat-accent);color:var(--cat-accent);}
+
+/* Label detail cards grid */
+.label-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;align-items:start;}
+.lcard{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:border-color .2s;}
+.lcard:hover{border-color:var(--cat-accent);}
+.lcard img{width:100%;height:auto;display:block;}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent-dim);}
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface3);border:1px solid var(--border);color:var(--text);padding:9px 18px;border-radius:10px;font-size:12px;opacity:0;transition:opacity .3s,transform .3s;z-index:9999;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ══ SEARCH BAR ══ */
+.search-wrap{position:relative;flex:1;min-width:160px;max-width:280px;}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.4;pointer-events:none;}
+.search-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 10px 6px 32px;border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:var(--cat-accent);}
+.search-input::placeholder{color:var(--text-dim);}
+
+/* ══ EDIT CARD MODAL ══ */
+.ec-modal{max-width:440px;padding:0 !important;overflow:hidden;border-radius:16px;}
+.ec-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.07);}
+.ec-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:#fff;}
+.ec-close{background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.ec-close:hover{background:rgba(255,255,255,.2);}
+.ec-body{padding:20px;display:flex;flex-direction:column;gap:18px;max-height:75vh;overflow-y:auto;}
+.ec-section{display:flex;flex-direction:column;gap:8px;}
+.ec-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);font-weight:600;}
+.ec-input{background:var(--surface2);border:1px solid var(--border);color:#fff;padding:10px 13px;border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+.ec-input:focus{border-color:var(--ec-accent,var(--accent));}
+
+/* Date display */
+.ec-date-display{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;color:var(--ec-accent,var(--accent));text-align:center;padding:8px 0 4px;}
+.ec-sliders{display:grid;grid-template-columns:1fr 1.4fr 1.6fr;gap:12px;}
+.ec-slider-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.ec-slider-label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;}
+.ec-range{width:100%;accent-color:var(--ec-accent,var(--accent));cursor:pointer;height:3px;}
+.ec-slider-val{font-size:12px;font-weight:600;color:var(--ec-accent,var(--accent));min-width:38px;text-align:center;}
+
+/* Rating */
+.ec-rating-nums{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;}
+.ec-rating-btn{width:36px;height:36px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;transition:transform .1s,border-color .15s;display:flex;align-items:center;justify-content:center;}
+.ec-rating-btn:hover{transform:scale(1.12);}
+.ec-rating-btn.active{border-color:#fff;transform:scale(1.15);box-shadow:0 0 12px rgba(255,255,255,.2);}
+.ec-rating-display{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:4px;}
+.ec-rating-num{font-family:'Bebas Neue',sans-serif;font-size:32px;}
+.ec-rating-label{font-size:13px;color:var(--text-dim);}
+
+/* Span */
+.ec-span-row{display:flex;align-items:center;gap:10px;}
+.ec-span-range{flex:1;cursor:pointer;height:3px;accent-color:var(--ec-accent,var(--accent));}
+.ec-span-val{font-size:13px;font-weight:700;color:var(--ec-accent,var(--accent));min-width:34px;text-align:right;}
+.ec-span-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-top:2px;}
+
+/* Actions */
+.ec-actions{display:flex;gap:8px;justify-content:flex-end;padding-top:4px;}
+.ec-save-btn{background:var(--ec-accent,var(--accent)) !important;}
+</style>
+</head>
+<body>
+
+<!-- ══ HOME ══ -->
+<div id="home" class="screen active">
+  <div class="hero">
+    <div class="logo-slot" id="logoSlot">
+      <div class="upload-hint" id="logoHint">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+        <span>Subir logo de Rankings</span>
+        <span style="font-size:11px;opacity:.55">PNG · JPG · SVG</span>
+      </div>
+      <img id="logoImg" style="display:none" alt="Logo">
+    </div>
+    <input type="file" id="logo-input" accept="image/*">
+    <div class="subtitle-wrap">
+      <div class="hero-subtitle" id="heroSubtitle" contenteditable="true" spellcheck="false" title="Editar texto · Doble clic derecho para cambiar color">My Personal Rankings</div>
+      <input type="color" id="subtitleColorInput" value="#9a7e26" oninput="changeSubtitleColor(this.value)" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
+    </div>
+  </div>
+  <div class="home-section-label">
+    <div class="home-section-text" id="homeSectionLabel" contenteditable="true" spellcheck="false">Colecciones</div>
+    <div class="icon-btn-row" style="margin-left:auto">
+      <button class="icon-btn" onclick="document.getElementById('json-import-input').click()" title="Importar datos (JSON)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+      </button>
+      <input type="file" id="json-import-input" accept="application/json,.json" style="display:none">
+      <button class="icon-btn" onclick="exportJSON()" title="Exportar datos (JSON)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21V9m0 0l-4 4m4-4l4 4M4 7V5a2 2 0 012-2h12a2 2 0 012 2v2"/></svg>
+      </button>
+      <button class="icon-btn" onclick="exportHTML()" title="Exportar todo como HTML (para ver en móvil)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      </button>
+      <button class="icon-btn danger" onclick="clearCache()" title="Limpiar caché">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="home-grid" id="homeGrid"></div>
+</div>
+
+<!-- ══ SECTIONS PAGE ══ -->
+<div id="sectionsPage" class="screen">
+  <div class="page-header" id="sectionsHeader">
+    <button class="back-btn" id="sectionsBackBtn">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      Atrás
+    </button>
+    <div class="page-title" id="sectionsTitle">SECCIONES</div>
+    <div class="page-controls">
+      <div class="color-btn" id="secAccentBtn" title="Color">
+        <input type="color" id="secAccentInput" onchange="changeCatAccent(this.value)">
+      </div>
+      <button class="add-primary-btn" onclick="openNewSection()">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        Nueva sección
+      </button>
+    </div>
+  </div>
+  <div class="cards-page">
+    <div class="grid-3" id="sectionsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:24px;"></div>
+  </div>
+</div>
+
+<!-- ══ CARDS PAGE ══ -->
+<div id="cardsPage" class="screen">
+  <div class="page-header" id="cardsHeader">
+    <button class="back-btn" id="cardsBackBtn">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      Atrás
+    </button>
+    <div class="page-title" id="cardsTitle">TARJETAS</div>
+    <div class="page-controls">
+      <div class="color-btn" id="cardsAccentBtn">
+        <input type="color" id="cardsAccentInput" onchange="changeCardsAccent(this.value)">
+      </div>
+      <!-- Tab switcher -->
+      <div class="page-tabs">
+        <button class="tab-btn active" id="tabCards" onclick="switchTab('cards')">🃏 Tarjetas</button>
+        <button class="tab-btn" id="tabLabels" onclick="switchTab('labels')">🏷️ Etiquetas</button>
+      </div>
+      <!-- Sort controls (cards tab only) -->
+      <div id="sortControls" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <div class="sort-pair">
+          <span class="sort-pair-label">Año</span>
+          <div class="sort-arrows">
+            <button class="sort-arrow" id="sc_ya" title="Más nuevas primero" onclick="setSort('year_desc')">▲</button>
+            <button class="sort-arrow" id="sc_yd" title="Más antiguas primero" onclick="setSort('year_asc')">▼</button>
+          </div>
+        </div>
+        <div class="sort-pair">
+          <span class="sort-pair-label">Rating</span>
+          <div class="sort-arrows">
+            <button class="sort-arrow" id="sc_ra" title="Mejor rating primero" onclick="setSort('rating_desc')">▲</button>
+            <button class="sort-arrow" id="sc_rd" title="Peor rating primero" onclick="setSort('rating_asc')">▼</button>
+          </div>
+        </div>
+        <button class="sort-chip" id="sc_cu" onclick="setSort('custom')">Libre</button>
+      </div>
+      <button class="ctrl-btn" id="toggleRankBtn" onclick="toggleRanks()">
+        # Ranking
+      </button>
+      <div class="search-wrap">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Buscar tarjeta..." oninput="renderGrid()">
+      </div>
+      <button class="add-primary-btn" id="addCardsBtn" onclick="openAddCards()">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        Añadir tarjetas
+      </button>
+      <button class="add-primary-btn" id="addLabelHeaderBtn" style="display:none" onclick="openAddLabel()">+ Nueva etiqueta</button>
+      <button class="back-btn" id="labelDetailBackBtn" style="display:none" onclick="closeLabelDetail()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Etiquetas
+      </button>
+    </div>
+  </div>
+  <!-- Cards tab -->
+  <div id="cardsTabContent" class="cards-page">
+    <div class="coll-grid" id="cardsGrid"></div>
+  </div>
+  <!-- Labels tab -->
+  <div id="labelsTabContent" class="labels-view" style="display:none">
+    <!-- Label detail view -->
+    <div id="labelDetailView" style="display:none">
+      <div class="coll-grid" id="labelDetailGrid"></div>
+    </div>
+    <!-- Main labels view -->
+    <div id="labelMainView">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <span style="font-size:11px;color:var(--text-dim)">Asigna etiquetas a las tarjetas desde el botón ✏️ de cada tarjeta</span>
+        <button class="add-primary-btn" onclick="openAddLabel()">+ Nueva etiqueta</button>
+      </div>
+      <div class="labels-pill-grid" id="labelsPillGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LIGHTBOX ══ -->
+<div id="lightbox">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button id="lightbox-flip-btn" onclick="flipLightboxCard()" title="Dar la vuelta" style="display:none">⟲</button>
+  <button id="lightbox-prev-card" onclick="event.stopPropagation();navigateLightboxCard(-1)" title="Tarjeta anterior" style="display:none">‹</button>
+  <button id="lightbox-next-card" onclick="event.stopPropagation();navigateLightboxCard(1)" title="Tarjeta siguiente" style="display:none">›</button>
+  <div id="lightbox-card" class="lightbox-card">
+    <div class="flip-inner" id="flipInner">
+      <div class="card-face card-front">
+        <img id="lightbox-img" src="" alt="">
+        <div class="lightbox-glare"></div>
+      </div>
+      <div class="card-face card-back" id="lightboxBackFace">
+        <div class="back-index" id="backIndexList"></div>
+        <div class="back-nav" id="backNav">
+          <button class="back-nav-btn" id="backNavPrev" onclick="backPagePrev()" title="Página anterior">‹</button>
+          <span class="back-nav-dots" id="backNavDots"></span>
+          <button class="back-nav-btn" id="backNavNext" onclick="backPageNext()" title="Página siguiente">›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="lightbox-name"></div>
+</div>
+
+<!-- MODAL: Nueva/Editar Colección -->
+<div class="modal-overlay" id="catModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeCatModal()">✕</button>
+    <h2 id="catModalTitle">Nueva Colección</h2>
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" id="catName" placeholder="Ej: Live Action, Anime…">
+    </div>
+    <div class="form-group">
+      <label>Tipo</label>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button type="button" id="typeWithSections" class="ctrl-btn active" onclick="setTypeBtn(true)" style="flex:1;justify-content:center">📂 Con secciones</button>
+        <button type="button" id="typeNoSections" class="ctrl-btn" onclick="setTypeBtn(false)" style="flex:1;justify-content:center">🃏 Directo</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Nombre del tipo de etiqueta</label>
+      <input type="text" id="catLabelType" placeholder="Ej: Estudio, Género, Saga…">
+    </div>
+    <div class="form-group">
+      <label>Color de acento</label>
+      <div class="color-swatches" id="catSwatches"></div>
+      <div class="inline-color-row">
+        <input type="color" id="catColorPicker" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--border);cursor:pointer;padding:2px">
+        <span style="font-size:11px;color:var(--text-dim)">Color personalizado</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Imagen de portada (opcional)</label>
+      <div class="img-upload-area">
+        <img id="catThumbPreview" class="preview-thumb" alt="">
+        <span id="catUploadLabel">Clic o arrastra</span>
+        <input type="file" id="catImgInput" accept="image/*" onchange="previewCatImg(this)">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Emoji</label>
+      <input type="text" id="catEmoji" placeholder="🎬 🎮 ✨" maxlength="4">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-danger" id="catDeleteBtn" onclick="deleteCollection()" style="display:none">Eliminar</button>
+      <button class="btn-secondary" onclick="closeCatModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveCollection()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Nueva/Editar Sección -->
+<div class="modal-overlay" id="sectionModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSectionModal()">✕</button>
+    <h2 id="sectionModalTitle">Nueva Sección</h2>
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" id="sectionName" placeholder="Ej: Movies, Series…">
+    </div>
+    <div class="form-group">
+      <label>Imagen de portada (opcional)</label>
+      <div class="img-upload-area">
+        <img id="secThumbPreview" class="preview-thumb" alt="">
+        <span id="secUploadLabel">Clic o arrastra</span>
+        <input type="file" id="secImgInput" accept="image/*" onchange="previewSecImg(this)">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Emoji</label>
+      <input type="text" id="sectionEmoji" placeholder="🎬 📺" maxlength="4">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-danger" id="secDeleteBtn" onclick="deleteSection()" style="display:none">Eliminar</button>
+      <button class="btn-secondary" onclick="closeSectionModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveSection()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Añadir Tarjetas -->
+<div class="modal-overlay" id="addCardsModal">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" onclick="closeAddCards()">✕</button>
+    <h2>Añadir Tarjetas</h2>
+    <div class="img-upload-area">
+      <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 8px;display:block;opacity:.45"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+      <span>Selecciona una o varias imágenes</span>
+      <input type="file" id="cardsInput" accept="image/*" multiple onchange="handleCardsUpload(this)">
+    </div>
+    <ul class="upload-list" id="uploadList"></ul>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeAddCards()">Cancelar</button>
+      <button class="btn-primary" onclick="confirmAddCards()">Añadir</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Editar Tarjeta -->
+<div class="modal-overlay" id="editCardModal">
+  <div class="modal ec-modal">
+    <div class="ec-header" id="ecHeader">
+      <span class="ec-title">Editar Tarjeta</span>
+      <button class="ec-close" onclick="closeEditCard()">&#x2715;</button>
+    </div>
+    <div class="ec-body">
+      <div class="ec-section">
+        <div class="ec-label">Imagen de la tarjeta</div>
+        <div class="img-upload-area" id="cardImgArea" style="padding:14px">
+          <img class="preview-thumb" id="cardImgPreview" alt="" style="display:none">
+          <span id="cardImgHint">Clic para reemplazar la imagen</span>
+          <input type="file" accept="image/*" onchange="previewCardImg(this)">
+        </div>
+      </div>
+      <div class="ec-section">
+        <div class="ec-label">Nombre</div>
+        <input type="text" id="editCardName" class="ec-input" placeholder="Ej: Indiana Jones">
+      </div>
+      <div class="ec-section">
+        <div class="ec-label">Fecha de lanzamiento <span id="ecDateClearBtn" style="font-size:10px;color:var(--text-dim);cursor:pointer;margin-left:8px;text-transform:none;letter-spacing:0" onclick="clearDate()">✕ borrar</span></div>
+        <div class="ec-date-display" id="ecDateDisplay">Sin fecha</div>
+        <div class="ec-spinners">
+          <div class="ec-spinner-wrap">
+            <div class="ec-spinner-label">Día</div>
+            <div class="ec-spinner-box">
+              <button class="ec-spin-btn" onclick="spinDate('day',1)">▲</button>
+              <input class="ec-spin-input" id="spinDay" type="text" value="" placeholder="--" maxlength="2" oninput="onSpinInput('day',this.value)">
+              <button class="ec-spin-btn" onclick="spinDate('day',-1)">▼</button>
+            </div>
+          </div>
+          <div class="ec-spinner-wrap">
+            <div class="ec-spinner-label">Mes</div>
+            <div class="ec-spinner-box">
+              <button class="ec-spin-btn" onclick="spinDate('month',1)">▲</button>
+              <input class="ec-spin-input" id="spinMonth" type="text" value="" placeholder="--" maxlength="9" oninput="onSpinInput('month',this.value)">
+              <button class="ec-spin-btn" onclick="spinDate('month',-1)">▼</button>
+            </div>
+          </div>
+          <div class="ec-spinner-wrap">
+            <div class="ec-spinner-label">Año</div>
+            <div class="ec-spinner-box">
+              <button class="ec-spin-btn" onclick="spinDate('year',1)">▲</button>
+              <input class="ec-spin-input" id="spinYear" type="text" value="" placeholder="----" maxlength="4" oninput="onSpinInput('year',this.value)">
+              <button class="ec-spin-btn" onclick="spinDate('year',-1)">▼</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ec-section">
+        <div class="ec-label">Mi Rating Personal <span id="ecRatingClearBtn" style="font-size:10px;color:var(--text-dim);cursor:pointer;margin-left:8px;text-transform:none;letter-spacing:0" onclick="clearRating()">✕ borrar</span></div>
+        <div class="ec-rating-nums" id="ecRatingNums"></div>
+        <div class="ec-rating-display" id="ecRatingDisplay">
+          <span class="ec-rating-num" id="ecRatingNum" style="color:var(--text-dim)">—</span>
+          <span class="ec-rating-label" id="ecRatingLabel">Sin valorar</span>
+        </div>
+      </div>
+      <div class="ec-section">
+        <div class="ec-label">Tamano en la cuadricula</div>
+        <div class="ec-span-row">
+          <input type="range" class="ec-span-range" id="editCardSpan" min="1" max="2" step="0.1" value="1" oninput="updateSpanDisplay()">
+          <div class="ec-span-val" id="ecSpanVal">x1.0</div>
+        </div>
+        <div class="ec-span-labels"><span>x1.0</span><span>x1.5</span><span>x2.0</span></div>
+      </div>
+      <div class="ec-section" id="flipSection">
+        <div class="ec-label">Reverso de la carta</div>
+        <div style="display:flex;gap:8px">
+          <button type="button" id="flipOffBtn" class="ctrl-btn active" onclick="setCardFlip(false)" style="flex:1;justify-content:center">Sin reverso</button>
+          <button type="button" id="flipOnBtn" class="ctrl-btn" onclick="setCardFlip(true)" style="flex:1;justify-content:center">🔄 Con reverso</button>
+        </div>
+        <div id="flipDetailGroup" style="display:none;flex-direction:column;gap:14px;margin-top:4px">
+          <div>
+            <div class="ec-label" style="margin-bottom:6px">Imagen de fondo (reverso)</div>
+            <div class="img-upload-area" id="backImgArea" style="padding:14px">
+              <img class="preview-thumb" id="backImgPreview" alt="" style="display:none">
+              <span id="backImgHint">Clic o arrastra una imagen de fondo</span>
+              <input type="file" accept="image/*" onchange="previewBackImg(this)">
+            </div>
+          </div>
+          <div>
+            <div class="ec-label" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <span>Índice (temporadas / elementos)</span>
+              <button type="button" class="add-primary-btn" style="padding:5px 10px" onclick="addSubCard()">+ Añadir</button>
+            </div>
+            <div id="subCardsList" style="display:flex;flex-direction:column;gap:10px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="ec-section" id="labelsAssignGroup">
+        <div class="ec-label" id="ecLabelTypeLabel">Etiquetas</div>
+        <div id="labelsAssignList" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"></div>
+      </div>
+      <div class="ec-actions">
+        <button class="btn-secondary" onclick="closeEditCard()">Cancelar</button>
+        <button class="btn-primary ec-save-btn" id="ecSaveBtn" onclick="confirmEditCard()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Renombrar tipo de etiqueta -->
+<div class="modal-overlay" id="labelTypeModal">
+  <div class="modal" style="max-width:360px">
+    <button class="modal-close" onclick="document.getElementById('labelTypeModal').classList.remove('open')">✕</button>
+    <h2>Tipo de etiqueta</h2>
+    <div class="form-group">
+      <label>Nombre del tipo</label>
+      <input type="text" id="labelTypeInput" placeholder="Ej: Estudio, Género, Saga…">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="document.getElementById('labelTypeModal').classList.remove('open')">Cancelar</button>
+      <button class="btn-primary" onclick="saveLabelType()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Nueva/Editar etiqueta -->
+<div class="modal-overlay" id="addLabelModal">
+  <div class="modal" style="max-width:400px">
+    <button class="modal-close" onclick="document.getElementById('addLabelModal').classList.remove('open')">✕</button>
+    <h2 id="addLabelModalTitle">Nueva Etiqueta</h2>
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" id="newLabelInput" placeholder="Ej: Pixar, Shonen, Marvel…">
+    </div>
+    <div class="form-group">
+      <label>Emoji / icono</label>
+      <input type="text" id="newLabelEmoji" placeholder="🏷️ 🎬 ✨" maxlength="4">
+    </div>
+    <div class="form-group">
+      <label>Color</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+        <input type="color" id="newLabelColor" value="#e05a5a" style="width:44px;height:36px;border-radius:8px;border:1px solid var(--border);cursor:pointer;padding:2px;flex-shrink:0">
+        <div class="color-swatches" id="labelSwatches" style="flex:1"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label id="labelImgUploadLabel">Imagen de portada (opcional)</label>
+      <div class="label-img-upload-wrap" id="labelImgWrap">
+        <img id="labelImgPreview" style="display:none;width:100%;height:100%;object-fit:cover" alt="">
+        <div class="limg-hint" id="labelImgHint">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+          <span>Subir imagen</span>
+        </div>
+        <input type="file" id="labelImgInput" accept="image/*" onchange="previewLabelImg(this)">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-danger" id="labelDeleteBtn" onclick="deleteLabelFromModal()" style="display:none">Eliminar</button>
+      <button class="btn-secondary" onclick="document.getElementById('addLabelModal').classList.remove('open')">Cancelar</button>
+      <button class="btn-primary" onclick="confirmAddLabel()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Subtítulo / color -->
+<div class="modal-overlay" id="subtitleModal">
+  <div class="modal" style="max-width:380px">
+    <button class="modal-close" onclick="document.getElementById('subtitleModal').classList.remove('open')">✕</button>
+    <h2>Editar subtítulo</h2>
+    <div class="form-group">
+      <label>Texto</label>
+      <input type="text" id="subtitleTextInput" placeholder="My Personal Rankings">
+    </div>
+    <div class="form-group">
+      <label>Color del texto</label>
+      <input type="color" id="subtitleColorModal" style="width:100%;height:40px;border-radius:8px;border:1px solid var(--border);cursor:pointer;padding:2px">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="document.getElementById('subtitleModal').classList.remove('open')">Cancelar</button>
+      <button class="btn-primary" onclick="saveSubtitle()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const PRESET_COLORS=['#D4AF37','#e05a5a','#5a9ee0','#5ae09e','#c05ae0','#e07a5a','#5ae0d4','#e0c05a','#ffffff'];
+const PILL_COLORS=window.PILL_COLORS=['#e05a5a','#5a9ee0','#5ae09e','#c05ae0','#e07a5a','#5ae0d4','#D4AF37','#e0c05a','#a05ae0','#5a80e0','#e05a9e','#70b060'];
+
+let state={logoSrc:null,subtitle:'My Personal Rankings',subtitleColor:'#9a7e26',sectionLabel:'Colecciones',collections:[]};
+// Collection: {id,name,emoji,coverSrc,accent,hasSections,labelTypeName,labels:[],sections:[],cards[],sortMode,cardOrder}
+// Section: {id,name,emoji,coverSrc,cards[],sortMode,cardOrder}
+// Card: {id,name,src,span,year,rating,labelIds:[]}
+// Label: {id,name}
+
+let currentColId=null,currentSecId=null,currentTab='cards',currentLabelFilter=null;
+let showRanks=false,pendingFiles=[],editingCardId=null,editingColId=null,editingSecId=null;
+let catImgPending=null,secImgPending=null,catAccentPend='#D4AF37',catHasSec=true;
+let dragSrcIdx=null;
+
+function save(){
+  try{
+    localStorage.setItem('rankings_v4',JSON.stringify(state));
+  }catch(e){
+    // QuotaExceededError - datos demasiado grandes para localStorage (imágenes pesadas)
+    console.warn('localStorage lleno:',e);
+  }
+}
+function load(){
+  try{
+    const s=localStorage.getItem('rankings_v4');
+    if(s) state=JSON.parse(s);
+  }catch(e){
+    console.warn('Error cargando estado:',e);
+  }
+}
+function saveManual(){save();toast('💾 Guardado correctamente');}
+function clearCache(){
+  if(!confirm('¿Limpiar caché? Se borrarán todos los datos (colecciones, tarjetas, imágenes). No se puede deshacer.'))return;
+  try{localStorage.removeItem('rankings_v4');}catch(e){}
+  toast('🗑️ Caché limpiada. Recargando...');
+  setTimeout(()=>location.reload(),1200);
+}
+function downloadBlob(content,filename,type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+}
+function dateStamp(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function exportJSON(){
+  downloadBlob(JSON.stringify(state,null,2),`rankings-backup-${dateStamp()}.json`,'application/json');
+  toast('📤 Datos exportados en JSON');
+}
+document.getElementById('json-import-input').addEventListener('change',function(){
+  const file=this.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const parsed=JSON.parse(e.target.result);
+      if(!parsed||typeof parsed!=='object'||!Array.isArray(parsed.collections)){
+        toast('⚠️ JSON inválido: falta el campo "collections"');
+        this.value='';return;
+      }
+      const merged={
+        logoSrc:null,subtitle:'My Personal Rankings',
+        subtitleColor:'#9a7e26',sectionLabel:'Colecciones',
+        collections:[],
+        ...parsed
+      };
+      let savedOk=false;
+      try{
+        localStorage.setItem('rankings_v4',JSON.stringify(merged));
+        savedOk=true;
+      }catch(quotaErr){}
+      state=merged;
+      if(savedOk){
+        toast('📥 Datos importados. Recargando...');
+        setTimeout(()=>location.reload(),800);
+      } else {
+        renderHome();initSubtitle();initSectionLabel();updateLogo();
+        toast('📥 Datos cargados (sin caché por tamaño)');
+      }
+    }catch(err){
+      toast('⚠️ Error leyendo el archivo: '+err.message);
+    }
+    this.value='';
+  };
+  reader.readAsText(file);
+});
+function exportHTML(){
+  try{
+    const doc=document.documentElement.cloneNode(true);
+    // Neutraliza inputs de archivo y estado transitorio de UI en la copia exportada
+    doc.querySelectorAll('input[type="file"]').forEach(i=>i.value='');
+    doc.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+    doc.querySelectorAll('#lightbox').forEach(l=>l.classList.remove('open'));
+    let html='<!DOCTYPE html>\n'+doc.outerHTML;
+    const defaultStateLiteral="let state={logoSrc:null,subtitle:'My Personal Rankings',subtitleColor:'#9a7e26',sectionLabel:'Colecciones',collections:[]};";
+    const embeddedStateLiteral='let state='+JSON.stringify(state)+';';
+    if(html.includes(defaultStateLiteral)){
+      html=html.replace(defaultStateLiteral,embeddedStateLiteral);
+    }else{
+      toast('⚠️ No se pudo embeber el estado, exportando de todas formas');
+    }
+    html=html.replace('\nload();\n','\n// load() desactivado: datos embebidos en este backup HTML\n');
+    downloadBlob(html,`rankings-backup-${dateStamp()}.html`,'text/html');
+    toast('📱 HTML con todos los datos exportado');
+  }catch(err){
+    toast('⚠️ Error al exportar HTML');
+  }
+}
+function uid(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36);}
+function b64(file,cb){const r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsDataURL(file);}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function getCol(id){return state.collections.find(c=>c.id===id);}
+function getSec(col,id){return(col.sections||[]).find(s=>s.id===id);}
+function hexRgba(hex,a){try{const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}catch{return'rgba(0,0,0,0.05)';}}
+
+// ── Init ──
+load();
+// Only apply defaults if no collections exist AND localStorage was empty
+if(!state.collections||!state.collections.length){
+  // Check if there's anything in localStorage at all before overwriting
+  const hasStorage=!!localStorage.getItem('rankings_v4');
+  if(!hasStorage){
+    // Fresh install - apply defaults
+    state.collections=[
+      {id:uid(),name:'Live Action',emoji:'🎬',coverSrc:null,accent:'#e05a5a',hasSections:true,labelTypeName:'Estudio',labels:[],sections:[{id:uid(),name:'Movies',emoji:'🎬',coverSrc:null,cards:[],sortMode:'custom',cardOrder:[]},{id:uid(),name:'Series',emoji:'📺',coverSrc:null,cards:[],sortMode:'custom',cardOrder:[]}],cards:[],sortMode:'custom',cardOrder:[]},
+      {id:uid(),name:'Animation',emoji:'✨',coverSrc:null,accent:'#5a9ee0',hasSections:true,labelTypeName:'Estudio',labels:[],sections:[{id:uid(),name:'Movies',emoji:'🎬',coverSrc:null,cards:[],sortMode:'custom',cardOrder:[]},{id:uid(),name:'Series',emoji:'📺',coverSrc:null,cards:[],sortMode:'custom',cardOrder:[]}],cards:[],sortMode:'custom',cardOrder:[]},
+      {id:uid(),name:'Anime',emoji:'⛩️',coverSrc:null,accent:'#c05ae0',hasSections:true,labelTypeName:'Género',labels:[],sections:[{id:uid(),name:'Movies',emoji:'🎬',coverSrc:null,cards:[],sortMode:'custom',cardOrder:[]},{id:uid(),name:'Series',emoji:'📺',coverSrc:null,cards:[],sortMode:'custom',cardOrder:[]}],cards:[],sortMode:'custom',cardOrder:[]},
+      {id:uid(),name:'Videogames',emoji:'🎮',coverSrc:null,accent:'#5ae09e',hasSections:false,labelTypeName:'Género',labels:[],sections:[],cards:[],sortMode:'custom',cardOrder:[]},
+    ];
+    save();
+  }
+  // If hasStorage but collections empty, something went wrong - don't overwrite
+}
+renderHome();
+initLogo();
+initSubtitle();
+initSectionLabel();
+buildColorSwatches();
+buildLabelSwatches();
+
+// ── Logo ──
+function initLogo(){
+  document.getElementById('logoSlot').addEventListener('click',()=>document.getElementById('logo-input').click());
+  document.getElementById('logo-input').addEventListener('change',function(){if(!this.files[0])return;b64(this.files[0],src=>{state.logoSrc=src;save();updateLogo();});});
+  updateLogo();
+}
+function updateLogo(){
+  const img=document.getElementById('logoImg'),hint=document.getElementById('logoHint'),slot=document.getElementById('logoSlot');
+  if(state.logoSrc){img.src=state.logoSrc;img.style.display='block';hint.style.display='none';slot.classList.add('has-img');}
+  else{img.style.display='none';hint.style.display='flex';slot.classList.remove('has-img');}
+}
+
+// ── Subtitle ──
+function initSubtitle(){
+  const el=document.getElementById('heroSubtitle');
+  const picker=document.getElementById('subtitleColorInput');
+  el.textContent=state.subtitle||'My Personal Rankings';
+  el.style.color=state.subtitleColor||'#9a7e26';
+  picker.value=state.subtitleColor||'#9a7e26';
+  el.addEventListener('blur',()=>{state.subtitle=el.textContent.trim()||'My Personal Rankings';save();});
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.blur();}});
+  // Right-click on subtitle = open color picker
+  el.addEventListener('contextmenu',e=>{
+    e.preventDefault();
+    picker.style.position='fixed';
+    picker.style.left=e.clientX+'px';
+    picker.style.top=e.clientY+'px';
+    picker.style.opacity='0';
+    picker.style.width='1px';
+    picker.style.height='1px';
+    picker.style.pointerEvents='auto';
+    picker.click();
+    setTimeout(()=>{picker.style.pointerEvents='none';},200);
+  });
+}
+function changeSubtitleColor(c){
+  state.subtitleColor=c;save();
+  document.getElementById('heroSubtitle').style.color=c;
+}
+
+// ── Section label ──
+function initSectionLabel(){
+  const el=document.getElementById('homeSectionLabel');
+  el.textContent=state.sectionLabel||'Colecciones';
+  el.addEventListener('blur',()=>{state.sectionLabel=el.textContent.trim()||'Colecciones';save();});
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.blur();}});
+}
+
+// ── Screens ──
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function setPageAccent(headerEl,color){headerEl.style.setProperty('--cat-accent',color);headerEl.style.borderTopColor=color;}
+
+// ── HOME ──
+function renderHome(){
+  const g=document.getElementById('homeGrid');g.innerHTML='';
+  state.collections.forEach(col=>{
+    const accent=col.accent||'#D4AF37';
+    const total=col.hasSections?(col.sections||[]).reduce((s,sec)=>s+(sec.cards||[]).length,0):(col.cards||[]).length;
+    const card=document.createElement('div');card.className='nav-card';card.style.setProperty('--cat-accent',accent);
+    card.innerHTML=`${col.coverSrc?`<img class="nc-img" src="${col.coverSrc}">`:`<div class="nc-placeholder" style="background:${hexRgba(accent,0.08)}">${col.emoji||'📁'}</div>`}<div class="nc-overlay"><div class="nc-name">${col.name}</div><div class="nc-count" style="color:${accent}">${col.hasSections?`${(col.sections||[]).length} secc. · ${total} tarj.`:`${total} tarjeta${total!==1?'s':''}`}</div></div><button class="nc-edit-btn">✏️</button>`;
+    card.querySelector('.nc-edit-btn').addEventListener('click',e=>{e.stopPropagation();openEditCol(col.id);});
+    card.addEventListener('click',()=>openCollection(col.id));
+    card.addEventListener('mouseenter',()=>card.style.borderColor=accent);
+    card.addEventListener('mouseleave',()=>card.style.borderColor='');
+    g.appendChild(card);
+  });
+  const addBtn=document.createElement('button');addBtn.className='add-nav-btn';
+  addBtn.innerHTML=`<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Nueva colección`;
+  addBtn.addEventListener('click',openNewCol);g.appendChild(addBtn);
+}
+
+// ── Navigation ──
+function openCollection(colId){
+  currentColId=colId;
+  const col=getCol(colId);
+  if(col.hasSections){currentSecId=null;renderSectionsPage();showScreen('sectionsPage');}
+  else{currentSecId=null;renderCardsPage();showScreen('cardsPage');}
+}
+function goHome(){currentColId=null;currentSecId=null;showScreen('home');renderHome();}
+function goToSections(){currentSecId=null;currentLabelFilter=null;renderSectionsPage();showScreen('sectionsPage');}
+
+// ── SECTIONS PAGE ──
+function renderSectionsPage(){
+  const col=getCol(currentColId);const accent=col.accent||'#D4AF37';
+  const hdr=document.getElementById('sectionsHeader');setPageAccent(hdr,accent);
+  document.getElementById('sectionsTitle').textContent=col.name.toUpperCase();document.getElementById('sectionsTitle').style.color=accent;
+  document.getElementById('secAccentBtn').style.background=accent;document.getElementById('secAccentInput').value=accent;
+  document.getElementById('sectionsBackBtn').onclick=goHome;
+  const g=document.getElementById('sectionsGrid');g.innerHTML='';
+  (col.sections||[]).forEach(sec=>{
+    const cnt=(sec.cards||[]).length;
+    const card=document.createElement('div');card.className='nav-card';card.style.setProperty('--cat-accent',accent);
+    card.innerHTML=`${sec.coverSrc?`<img class="nc-img" src="${sec.coverSrc}">`:`<div class="nc-placeholder" style="background:${hexRgba(accent,0.1)}">${sec.emoji||'📁'}</div>`}<div class="nc-overlay"><div class="nc-name">${sec.name}</div><div class="nc-count" style="color:${accent}">${cnt} tarjeta${cnt!==1?'s':''}</div></div><button class="nc-edit-btn">✏️</button>`;
+    card.querySelector('.nc-edit-btn').addEventListener('click',e=>{e.stopPropagation();openEditSection(sec.id);});
+    card.addEventListener('click',()=>{currentSecId=sec.id;currentLabelFilter=null;renderCardsPage();showScreen('cardsPage');});
+    card.addEventListener('mouseenter',()=>card.style.borderColor=accent);card.addEventListener('mouseleave',()=>card.style.borderColor='');
+    g.appendChild(card);
+  });
+  const addBtn=document.createElement('button');addBtn.className='add-nav-btn';
+  addBtn.innerHTML=`<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Nueva sección`;
+  addBtn.addEventListener('click',openNewSection);g.appendChild(addBtn);
+}
+function changeCatAccent(color){const col=getCol(currentColId);col.accent=color;save();renderSectionsPage();}
+function changeCardsAccent(color){const col=getCol(currentColId);col.accent=color;save();renderCardsPage();}
+
+// ── CARDS PAGE ──
+function getActiveContainer(){const col=getCol(currentColId);return currentSecId?getSec(col,currentSecId):col;}
+
+function renderCardsPage(){
+  const col=getCol(currentColId);const accent=col.accent||'#D4AF37';
+  const container=getActiveContainer();
+  const hdr=document.getElementById('cardsHeader');setPageAccent(hdr,accent);
+  const titleEl=document.getElementById('cardsTitle');
+  const baseTitle=(currentSecId?`${col.name} · ${container.name}`:col.name).toUpperCase();
+  titleEl.textContent=baseTitle;
+  titleEl.dataset.base=baseTitle;
+  titleEl.style.color=accent;
+  document.getElementById('cardsAccentBtn').style.background=accent;document.getElementById('cardsAccentInput').value=accent;
+  const bc=document.getElementById('cardsBreadcrumb');
+  if(bc) bc.innerHTML=''; // breadcrumb removed, kept for compat
+  if(currentSecId){document.getElementById('cardsBackBtn').onclick=goToSections;}
+  else{document.getElementById('cardsBackBtn').onclick=goHome;}
+  // update sort chips
+  updateSortChips(container.sortMode||'custom');
+  showRanks=false;document.getElementById('toggleRankBtn').classList.remove('active');
+  // tabs
+  document.getElementById('tabCards').style.setProperty('--cat-accent',accent);
+  document.getElementById('tabLabels').style.setProperty('--cat-accent',accent);
+  switchTab(currentTab);
+}
+
+function switchTab(tab){
+  currentTab=tab;
+  document.getElementById('tabCards').classList.toggle('active',tab==='cards');
+  document.getElementById('tabLabels').classList.toggle('active',tab==='labels');
+  document.getElementById('cardsTabContent').style.display=tab==='cards'?'':'none';
+  document.getElementById('labelsTabContent').style.display=tab==='labels'?'':'none';
+  document.getElementById('sortControls').style.display=tab==='cards'?'flex':'none';
+  document.getElementById('toggleRankBtn').style.display=tab==='cards'?'':'none';
+  document.getElementById('addCardsBtn').style.display=tab==='cards'?'':'none';
+  const sw=document.getElementById('searchInput');if(sw)sw.closest('.search-wrap').style.display=tab==='cards'?'':'none';
+  // hide any stale label header buttons
+  const lhb=document.getElementById('addLabelHeaderBtn');if(lhb)lhb.style.display='none';
+  const ldb=document.getElementById('labelDetailBackBtn');if(ldb)ldb.style.display='none';
+  // Update title suffix
+  const col=getCol(currentColId);const accent=col.accent||'#D4AF37';
+  const titleEl=document.getElementById('cardsTitle');
+  const base=titleEl.dataset.base||titleEl.textContent;
+  if(tab==='labels'){
+    titleEl.textContent=base+' · ETIQUETAS';
+    titleEl.style.color=accent;
+    // show add label button
+    if(lhb)lhb.style.display='';
+    renderLabelsTab();
+  } else {
+    titleEl.textContent=base;
+    titleEl.style.color=accent;
+    renderGrid();
+  }
+}
+
+// ── SORT ──
+function updateSortChips(mode){
+  ['sc_ya','sc_yd','sc_ra','sc_rd','sc_cu'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.classList.remove('active');
+  });
+  // ▲ = best/newest first = desc; ▼ = worst/oldest first = asc
+  const map={year_desc:'sc_ya',year_asc:'sc_yd',rating_desc:'sc_ra',rating_asc:'sc_rd',custom:'sc_cu'};
+  if(map[mode]){const el=document.getElementById(map[mode]);if(el)el.classList.add('active');}
+}
+function setSort(mode){
+  const c=getActiveContainer();
+  // cardOrder guarda siempre la posición manual (el "orden libre"), como un índice invisible
+  // por tarjeta. No se toca al cambiar de modo: así, aunque ordenes por año o rating,
+  // al volver a «Libre» se recupera exactamente el orden que dejaste la última vez.
+  c.sortMode=mode;
+  save();updateSortChips(mode);renderGrid();
+}
+
+// ── GRID ──
+function cardDateVal(card,nullLast=true){
+  if(card.dateYear===null&&card.dateMonth===null&&card.dateDay===null&&card.year===null){
+    return nullLast?99999999:-1;
+  }
+  const y=card.dateYear||card.year||9999;
+  const m=card.dateMonth||1;
+  const d=card.dateDay||1;
+  return y*10000+m*100+d;
+}
+
+function getOrderedCards(container){
+  const mode=container.sortMode||'custom';
+  if(mode==='custom'){
+    const order=container.cardOrder||[];
+    const mapped=order.map(id=>container.cards.find(c=>c.id===id)).filter(Boolean);
+    const rest=container.cards.filter(c=>!order.includes(c.id));
+    return[...mapped,...rest];
+  }
+  const cards=[...container.cards];
+  if(mode==='year_desc') cards.sort((a,b)=>{const av=cardDateVal(a,false),bv=cardDateVal(b,false);if(av===-1&&bv===-1)return 0;if(av===-1)return 1;if(bv===-1)return -1;return bv-av;});
+  if(mode==='year_asc')  cards.sort((a,b)=>{const av=cardDateVal(a,true),bv=cardDateVal(b,true);if(av===99999999&&bv===99999999)return 0;if(av===99999999)return 1;if(bv===99999999)return -1;return av-bv;});
+  if(mode==='rating_desc') cards.sort((a,b)=>{if(a.rating==null&&b.rating==null)return 0;if(a.rating==null)return 1;if(b.rating==null)return -1;return b.rating-a.rating;});
+  if(mode==='rating_asc')  cards.sort((a,b)=>{if(a.rating==null&&b.rating==null)return 0;if(a.rating==null)return 1;if(b.rating==null)return -1;return a.rating-b.rating;});
+  return cards;
+}
+
+function renderGrid(){
+  const col=getCol(currentColId);const accent=col.accent||'#D4AF37';
+  const container=getActiveContainer();
+  const grid=document.getElementById('cardsGrid');grid.innerHTML='';
+  grid.style.setProperty('--cat-accent',accent);
+
+  // Search filter
+  const searchVal=(document.getElementById('searchInput')?.value||'').trim().toLowerCase();
+
+  let ordered=getOrderedCards(container);
+  if(searchVal) ordered=ordered.filter(c=>(c.name||'').toLowerCase().includes(searchVal));
+
+  if(!ordered.length){
+    const msg=searchVal?`Sin resultados para «${searchVal}»`:'Colección vacía. Pulsa «Añadir tarjetas».';
+    grid.innerHTML=`<div class="empty-state"><svg fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg><span>${msg}</span></div>`;
+    return;
+  }
+  ordered.forEach((card,idx)=>{
+    const span=card.span||1;
+    const el=document.createElement('div');el.className='card-item';el.dataset.id=card.id;el.dataset.idx=idx;el.draggable=true;
+    if(span>1.05) el.style.gridColumn=`span ${Math.round(span)}`;
+    el.innerHTML=`<img src="${card.src}" alt="" loading="lazy">${showRanks?`<div class="card-rank" style="background:${accent};color:#000">${idx+1}</div>`:''}<div class="card-actions"><button class="card-act-btn edit" onclick="openEditCard('${card.id}',event)">✏️</button><button class="card-act-btn delete" onclick="deleteCard('${card.id}',event)">✕</button></div><div class="card-drag-handle">⠿</div>`;
+    let didDrag=false;
+    el.addEventListener('mousedown',()=>{didDrag=false;});
+    el.addEventListener('mousemove',()=>{didDrag=true;});
+    el.addEventListener('click',e=>{if(didDrag||e.target.closest('.card-actions'))return;openLightbox(card,ordered,idx);});
+    el.addEventListener('dragstart',e=>{dragSrcIdx=idx;el.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+    el.addEventListener('dragend',()=>el.classList.remove('dragging'));
+    el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('drag-over');});
+    el.addEventListener('dragleave',()=>el.classList.remove('drag-over'));
+    el.addEventListener('drop',e=>{
+      e.preventDefault();el.classList.remove('drag-over');
+      if(dragSrcIdx===null||dragSrcIdx===idx)return;
+      const c=getActiveContainer();const ord=getOrderedCards(c);
+      const moved=ord.splice(dragSrcIdx,1)[0];ord.splice(idx,0,moved);
+      c.cardOrder=ord.map(x=>x.id);c.sortMode='custom';
+      updateSortChips('custom');save();renderGrid();dragSrcIdx=null;
+    });
+    grid.appendChild(el);
+  });
+}
+
+function toggleRanks(){showRanks=!showRanks;document.getElementById('toggleRankBtn').classList.toggle('active',showRanks);renderGrid();}
+
+// ── LABELS TAB ──
+let labelDragSrc=null;
+// buildLabelSwatches called after init
+
+function renderLabelsTab(){
+  const col=getCol(currentColId);
+  const container=getActiveContainer();
+  // Always start at main view
+  document.getElementById('labelMainView').style.display='';
+  document.getElementById('labelDetailView').style.display='none';
+
+  const grid=document.getElementById('labelsPillGrid');grid.innerHTML='';
+  const allLabels=col.labels||[];
+
+  allLabels.forEach((lbl,i)=>{
+    // assign default color if not set
+    if(!lbl.color) lbl.color=PILL_COLORS[i%PILL_COLORS.length];
+    const cnt=(container.cards||[]).filter(c=>(c.labelIds||[]).includes(lbl.id)).length;
+    const color=lbl.color;
+
+    const card=document.createElement('div');
+    card.className='label-nav-card';card.draggable=true;
+    card.style.setProperty('--lc',color);
+    card.innerHTML=`
+      ${lbl.coverSrc?`<img class="lnc-img" src="${lbl.coverSrc}">`:`<div class="lnc-placeholder">${lbl.emoji||'🏷️'}</div>`}
+      <div class="lnc-overlay">
+        <div class="lnc-name">${lbl.name}</div>
+        <div class="lnc-count">${cnt} tarjeta${cnt!==1?'s':''}</div>
+      </div>
+      <div class="lnc-actions">
+        <button class="lnc-edit-btn" title="Editar etiqueta">✏️</button>
+        <button class="lnc-del-btn" title="Eliminar">✕</button>
+      </div>`;
+
+    card.querySelector('.lnc-edit-btn').addEventListener('click',e=>{e.stopPropagation();openEditLabel(lbl.id);});
+    card.querySelector('.lnc-del-btn').addEventListener('click',e=>{e.stopPropagation();deleteLabelPill(lbl.id,e);});
+    card.addEventListener('click',e=>{if(e.target.closest('.lnc-actions'))return;openLabelDetail(lbl.id);});
+
+    // drag reorder
+    card.addEventListener('dragstart',e=>{labelDragSrc=i;card.style.opacity='.4';e.dataTransfer.effectAllowed='move';});
+    card.addEventListener('dragend',()=>{card.style.opacity='';});
+    card.addEventListener('dragover',e=>{e.preventDefault();card.style.outline='2px solid '+color;});
+    card.addEventListener('dragleave',()=>{card.style.outline='';});
+    card.addEventListener('drop',e=>{
+      e.preventDefault();card.style.outline='';
+      if(labelDragSrc===null||labelDragSrc===i)return;
+      const moved=allLabels.splice(labelDragSrc,1)[0];
+      allLabels.splice(i,0,moved);
+      save();renderLabelsTab();labelDragSrc=null;
+    });
+
+    card.addEventListener('mouseenter',()=>card.style.borderColor=color);
+    card.addEventListener('mouseleave',()=>card.style.borderColor='');
+    grid.appendChild(card);
+  });
+
+  const addBtn=document.createElement('button');addBtn.className='add-nav-btn label-add-btn';
+  addBtn.innerHTML=`<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Nueva etiqueta`;
+  addBtn.addEventListener('click',openAddLabel);grid.appendChild(addBtn);
+}
+
+function openLabelDetail(labelId){
+  const col=getCol(currentColId);const accent=col.accent||'#D4AF37';
+  const container=getActiveContainer();
+  const lbl=(col.labels||[]).find(l=>l.id===labelId);if(!lbl)return;
+  const color=lbl.color||accent;
+
+  // Update page header title: BASE · ETIQUETAS · LABELNAME
+  const pageTitleEl=document.getElementById('cardsTitle');
+  const base=pageTitleEl.dataset.base||'';
+  pageTitleEl.textContent=`${base} · ETIQUETAS · ${lbl.name.toUpperCase()}`;
+  pageTitleEl.style.color=color;
+  document.getElementById('cardsHeader').style.borderTopColor=color;
+
+  // Redirect main back button to go back to etiquetas (not sections/home)
+  document.getElementById('cardsBackBtn').onclick=closeLabelDetail;
+  const ldb=document.getElementById('labelDetailBackBtn');if(ldb)ldb.style.display='none';
+  const lhb=document.getElementById('addLabelHeaderBtn');if(lhb)lhb.style.display='none';
+
+  document.getElementById('labelMainView').style.display='none';
+  document.getElementById('labelDetailView').style.display='';
+
+  const grid=document.getElementById('labelDetailGrid');
+  grid.className='coll-grid';
+  grid.style.setProperty('--cat-accent',color);
+  grid.innerHTML='';
+
+  const filtered=(container.cards||[]).filter(c=>(c.labelIds||[]).includes(labelId));
+  if(!filtered.length){
+    grid.innerHTML=`<div style="color:var(--text-dim);font-size:13px;padding:20px 0;grid-column:1/-1">Ninguna tarjeta tiene esta etiqueta. Asígnala desde el ✏️ de cada tarjeta.</div>`;
+    return;
+  }
+  filtered.forEach((card,idx)=>{
+    const span=card.span||1;
+    const el=document.createElement('div');el.className='card-item';
+    if(span>1.05) el.style.gridColumn=`span ${Math.round(span)}`;
+    el.innerHTML=`<img src="${card.src}" loading="lazy" style="width:100%;height:auto;display:block;"><div class="card-rank" style="background:${color};color:#000">${idx+1}</div><div class="card-actions"><button class="card-act-btn edit" onclick="openEditCardFromLabel('${card.id}',event)">✏️</button></div>`;
+    el.addEventListener('click',e=>{if(e.target.closest('.card-actions'))return;openLightbox(card,filtered,idx);});
+    grid.appendChild(el);
+  });
+}
+
+function openEditCardFromLabel(cardId,e){
+  e.stopPropagation();
+  openEditCard(cardId,{stopPropagation:()=>{}});
+}
+
+function closeLabelDetail(){
+  document.getElementById('labelDetailView').style.display='none';
+  document.getElementById('labelMainView').style.display='';
+  // Restore cardsBackBtn to its normal navigation
+  document.getElementById('cardsBackBtn').style.display='';
+  document.getElementById('cardsBackBtn').onclick=currentSecId?goToSections:goHome;
+  const ldb=document.getElementById('labelDetailBackBtn');if(ldb)ldb.style.display='none';
+  const lhb=document.getElementById('addLabelHeaderBtn');if(lhb)lhb.style.display='';
+  // Restore title to BASE · ETIQUETAS
+  const col=getCol(currentColId);const accent=col.accent||'#D4AF37';
+  const pageTitleEl=document.getElementById('cardsTitle');
+  const base=pageTitleEl.dataset.base||'';
+  pageTitleEl.textContent=`${base} · ETIQUETAS`;
+  pageTitleEl.style.color=accent;
+  document.getElementById('cardsHeader').style.borderTopColor=accent;
+  renderLabelsTab();
+}
+
+function closeLabelDetailSilent(){
+  document.getElementById('labelDetailView').style.display='none';
+  document.getElementById('labelMainView').style.display='';
+  document.getElementById('cardsBackBtn').style.display='';
+  document.getElementById('cardsBackBtn').onclick=currentSecId?goToSections:goHome;
+  const ldb=document.getElementById('labelDetailBackBtn');if(ldb)ldb.style.display='none';
+}
+
+
+function deleteLabelPill(id,e){
+  e.stopPropagation();
+  const col=getCol(currentColId);
+  col.labels=(col.labels||[]).filter(l=>l.id!==id);
+  const container=getActiveContainer();
+  (container.cards||[]).forEach(c=>{c.labelIds=(c.labelIds||[]).filter(x=>x!==id);});
+  save();renderLabelsTab();
+}
+
+function previewLabelImg(input){
+  if(!input.files[0])return;
+  b64(input.files[0],src=>{
+    labelImgPending=src;
+    const prev=document.getElementById('labelImgPreview');
+    const hint=document.getElementById('labelImgHint');
+    prev.src=src;prev.style.display='block';
+    if(hint)hint.style.display='none';
+  });
+}
+
+function buildLabelSwatches(){
+  const c=document.getElementById('labelSwatches');
+  if(!c)return;
+  c.innerHTML='';
+  (window.PILL_COLORS||['#e05a5a','#5a9ee0','#5ae09e','#c05ae0','#e07a5a','#5ae0d4','#D4AF37','#e0c05a','#a05ae0','#5a80e0','#e05a9e','#70b060']).forEach(col=>{
+    const sw=document.createElement('div');sw.className='swatch';sw.style.background=col;sw.dataset.color=col;
+    sw.addEventListener('click',()=>{
+      document.getElementById('newLabelColor').value=col;
+      c.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));sw.classList.add('active');
+    });
+    c.appendChild(sw);
+  });
+  const picker=document.getElementById('newLabelColor');
+  if(picker) picker.addEventListener('input',function(){
+    c.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+  });
+}
+// buildLabelSwatches called in init block above
+
+let editingLabelId=null;
+let labelImgPending=null;
+let labelColorPending='#D4AF37';
+
+function openAddLabel(){
+  editingLabelId=null;labelImgPending=null;labelColorPending=PILL_COLORS[0];
+  document.getElementById('addLabelModalTitle').textContent='Nueva Etiqueta';
+  document.getElementById('newLabelInput').value='';
+  document.getElementById('newLabelEmoji').value='';
+  document.getElementById('newLabelColor').value=PILL_COLORS[0];
+  const prev=document.getElementById('labelImgPreview');
+  const hint=document.getElementById('labelImgHint');
+  prev.style.display='none';prev.src='';
+  if(hint)hint.style.display='flex';
+  document.getElementById('labelDeleteBtn').style.display='none';
+  document.getElementById('addLabelModal').classList.add('open');
+  setTimeout(()=>document.getElementById('newLabelInput').focus(),50);
+}
+function openEditLabel(id){
+  const col=getCol(currentColId);const lbl=(col.labels||[]).find(l=>l.id===id);if(!lbl)return;
+  editingLabelId=id;labelImgPending=lbl.coverSrc||null;labelColorPending=lbl.color||PILL_COLORS[0];
+  document.getElementById('addLabelModalTitle').textContent='Editar Etiqueta';
+  document.getElementById('newLabelInput').value=lbl.name||'';
+  document.getElementById('newLabelEmoji').value=lbl.emoji||'';
+  document.getElementById('newLabelColor').value=lbl.color||PILL_COLORS[0];
+  const prev=document.getElementById('labelImgPreview');
+  const hint=document.getElementById('labelImgHint');
+  if(lbl.coverSrc){prev.src=lbl.coverSrc;prev.style.display='block';if(hint)hint.style.display='none';}
+  else{prev.style.display='none';prev.src='';if(hint)hint.style.display='flex';}
+  document.getElementById('labelDeleteBtn').style.display='block';
+  document.getElementById('addLabelModal').classList.add('open');
+  setTimeout(()=>document.getElementById('newLabelInput').focus(),50);
+}
+function confirmAddLabel(){
+  const name=document.getElementById('newLabelInput').value.trim();if(!name)return;
+  const emoji=document.getElementById('newLabelEmoji').value.trim()||'🏷️';
+  const color=document.getElementById('newLabelColor').value||labelColorPending;
+  const col=getCol(currentColId);if(!col.labels)col.labels=[];
+  if(editingLabelId){
+    const lbl=col.labels.find(l=>l.id===editingLabelId);
+    if(lbl){lbl.name=name;lbl.emoji=emoji;lbl.color=color;if(labelImgPending!==undefined)lbl.coverSrc=labelImgPending;}
+  } else {
+    col.labels.push({id:uid(),name,emoji,color,coverSrc:labelImgPending||null});
+  }
+  save();
+  document.getElementById('addLabelModal').classList.remove('open');
+  if(currentTab==='labels')renderLabelsTab();
+  toast(editingLabelId?'✅ Etiqueta actualizada':'✅ Etiqueta creada');
+}
+function deleteLabelFromModal(){
+  if(!editingLabelId)return;
+  if(!confirm('¿Eliminar esta etiqueta?'))return;
+  deleteLabelPill(editingLabelId,{stopPropagation:()=>{}});
+  document.getElementById('addLabelModal').classList.remove('open');
+}
+document.getElementById('newLabelInput').addEventListener('keydown',e=>{if(e.key==='Enter')confirmAddLabel();});
+
+function renameLabelType(){document.getElementById('labelTypeInput').value=getCol(currentColId).labelTypeName||'Estudio';document.getElementById('labelTypeModal').classList.add('open');setTimeout(()=>document.getElementById('labelTypeInput').focus(),50);}
+function saveLabelType(){const v=document.getElementById('labelTypeInput').value.trim();if(v){getCol(currentColId).labelTypeName=v;save();}document.getElementById('labelTypeModal').classList.remove('open');renderLabelsTab();}
+
+// ── LIGHTBOX ──
+let lbCurrentCard=null;
+let lbBackPages=[[]],lbBackPageIdx=0;
+let lbCardList=[],lbCardIdx=-1;
+
+function onLightboxImgLoad(){
+  fitLightboxCard();
+  if(lbCurrentCard&&lbCurrentCard.flipEnabled)layoutBackPages(lbCurrentCard);
+}
+
+// Abre el lightbox. list = array de tarjetas de la vista actual (para poder navegar con ‹ ›),
+// idx = posición de "card" dentro de esa lista.
+function openLightbox(card,list,idx){
+  lbCardList=list&&list.length?list:[card];
+  lbCardIdx=(idx!=null)?idx:lbCardList.findIndex(c=>c.id===card.id);
+  if(lbCardIdx<0)lbCardIdx=0;
+  loadLightboxCard(card);
+  document.getElementById('lightbox').classList.add('open');
+  updateLightboxNavButtons();
+}
+function loadLightboxCard(card){
+  lbCurrentCard=card;
+  const img=document.getElementById('lightbox-img');
+  img.onload=onLightboxImgLoad;
+  img.src=card.src;
+  document.getElementById('lightbox-name').textContent=card.name||'';
+  document.getElementById('flipInner').classList.remove('flipped');
+  const flipBtn=document.getElementById('lightbox-flip-btn');
+  if(card.flipEnabled){flipBtn.style.display='flex';prepareLightboxBack(card);}
+  else{flipBtn.style.display='none';}
+  lbResetTilt();
+}
+function navigateLightboxCard(delta){
+  if(!lbCardList.length)return;
+  lbCardIdx=(lbCardIdx+delta+lbCardList.length)%lbCardList.length;
+  loadLightboxCard(lbCardList[lbCardIdx]);
+}
+function updateLightboxNavButtons(){
+  const multi=lbCardList.length>1;
+  document.getElementById('lightbox-prev-card').style.display=multi?'flex':'none';
+  document.getElementById('lightbox-next-card').style.display=multi?'flex':'none';
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');lbResetTilt();document.getElementById('flipInner').classList.remove('flipped');lbCurrentCard=null;lbCardList=[];lbCardIdx=-1;}
+document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===document.getElementById('lightbox'))closeLightbox();});
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lightbox').classList.contains('open'))return;
+  if(e.key==='ArrowLeft'){e.preventDefault();navigateLightboxCard(-1);}
+  else if(e.key==='ArrowRight'){e.preventDefault();navigateLightboxCard(1);}
+  else if(e.key==='Escape'){closeLightbox();}
+});
+
+function fitLightboxCard(){
+  const img=document.getElementById('lightbox-img');
+  const natW=img.naturalWidth||300,natH=img.naturalHeight||450;
+  const maxW=window.innerWidth*0.9,maxH=window.innerHeight*0.9;
+  const scale=Math.min(maxW/natW,maxH/natH,1);
+  document.getElementById('lightbox-card').style.width=(natW*scale)+'px';
+  document.getElementById('lightbox-card').style.height=(natH*scale)+'px';
+}
+window.addEventListener('resize',()=>{
+  if(!document.getElementById('lightbox').classList.contains('open'))return;
+  fitLightboxCard();
+  if(lbCurrentCard&&lbCurrentCard.flipEnabled)layoutBackPages(lbCurrentCard);
+});
+
+function flipLightboxCard(){
+  document.getElementById('flipInner').classList.toggle('flipped');
+  lbResetTilt();
+}
+
+// Prepara el fondo del reverso y resetea a la primera página (se llama al abrir la carta)
+function prepareLightboxBack(card){
+  const face=document.getElementById('lightboxBackFace');
+  face.style.backgroundImage=card.backSrc?`url(${card.backSrc})`:'none';
+  lbBackPageIdx=0;
+  layoutBackPages(card);
+}
+
+// Mide (una sola vez) el tamaño real de una franja-índice para poder calcular su altura exacta
+// una vez encajada al ancho de la carta. Se guarda en la propia subcarta para no remedirla nunca más.
+function measureStripDims(sc){
+  return new Promise(resolve=>{
+    if(sc.stripW&&sc.stripH){resolve();return;}
+    const im=new Image();
+    im.onload=()=>{sc.stripW=im.naturalWidth||300;sc.stripH=im.naturalHeight||100;resolve();};
+    im.onerror=()=>{sc.stripW=300;sc.stripH=100;resolve();};
+    im.src=sc.stripSrc;
+  });
+}
+
+// Calcula cuántas franjas caben por página según su TAMAÑO REAL (la imagen que importaste)
+// encajada al ancho de la carta, y reparte el resto en páginas nuevas, tipo libro.
+function layoutBackPages(card){
+  const listEl=document.getElementById('backIndexList');
+  const navEl=document.getElementById('backNav');
+  const subs=(card.subCards||[]).filter(s=>s.stripSrc);
+  if(!subs.length){
+    listEl.innerHTML=`<div class="back-index-empty">Sin temporadas añadidas todavía</div>`;
+    navEl.style.display='none';
+    lbBackPages=[[]];lbBackPageIdx=0;
+    return;
+  }
+  Promise.all(subs.map(measureStripDims)).then(()=>{
+    if(!lbCurrentCard||lbCurrentCard.id!==card.id)return; // el usuario ya navegó a otra carta
+    const lbCard=document.getElementById('lightbox-card');
+    const boxW=lbCard.clientWidth||300,boxH=lbCard.clientHeight||450;
+    const innerW=boxW-36; // padding horizontal de .card-back (18px a cada lado)
+    const gap=12,vPad=44,navReserve=44;
+    const heightOf=sc=>innerW*((sc.stripH||100)/(sc.stripW||300));
+    function chunk(availH){
+      const pages=[];let cur=[],curH=0;
+      subs.forEach(sc=>{
+        const h=heightOf(sc);
+        const extra=cur.length===0?h:gap+h;
+        if(cur.length>0&&curH+extra>availH){pages.push(cur);cur=[sc];curH=h;}
+        else{cur.push(sc);curH+=extra;}
+      });
+      if(cur.length)pages.push(cur);
+      return pages;
+    }
+    let pages=chunk(boxH-vPad);
+    if(pages.length>1)pages=chunk(boxH-vPad-navReserve);
+    lbBackPages=pages;
+    lbBackPageIdx=Math.min(lbBackPageIdx,pages.length-1);
+    renderBackPage();
+    save(); // persiste stripW/stripH recién medidos, para no tener que remedir la próxima vez
+  });
+}
+function renderBackPage(direction){
+  const listEl=document.getElementById('backIndexList');listEl.innerHTML='';
+  const navEl=document.getElementById('backNav');
+  const pages=lbBackPages&&lbBackPages.length?lbBackPages:[[]];
+  const idx=lbBackPageIdx||0;
+  (pages[idx]||[]).forEach(sc=>{
+    const item=document.createElement('div');item.className='back-strip-item';
+    item.innerHTML=`<div class="back-strip-inner"><img src="${sc.stripSrc}" alt="${sc.name||''}"></div>`;
+    item.addEventListener('click',()=>selectSubCard(sc.id));
+    listEl.appendChild(item);
+  });
+  if(pages.length>1){
+    navEl.style.display='flex';
+    document.getElementById('backNavPrev').disabled=idx===0;
+    document.getElementById('backNavNext').disabled=idx===pages.length-1;
+    document.getElementById('backNavDots').textContent=`${idx+1} / ${pages.length}`;
+  } else {
+    navEl.style.display='none';
+  }
+  // Pequeña animación de "pasar página" al navegar (no en la primera carga)
+  if(direction&&listEl.animate){
+    const offset=direction==='next'?28:-28;
+    listEl.animate(
+      [{transform:`translateX(${offset}px)`,opacity:0},{transform:'translateX(0)',opacity:1}],
+      {duration:260,easing:'cubic-bezier(.22,.61,.36,1)'}
+    );
+  }
+}
+function backPagePrev(){if(lbBackPageIdx>0){lbBackPageIdx--;renderBackPage('prev');}}
+function backPageNext(){if(lbBackPageIdx<lbBackPages.length-1){lbBackPageIdx++;renderBackPage('next');}}
+
+function selectSubCard(subId){
+  if(!lbCurrentCard)return;
+  const sc=(lbCurrentCard.subCards||[]).find(s=>s.id===subId);
+  if(!sc||!sc.cardSrc){toast('⚠️ Esta temporada aún no tiene carta asignada');return;}
+  const img=document.getElementById('lightbox-img');
+  img.onload=onLightboxImgLoad;
+  img.src=sc.cardSrc;
+  document.getElementById('lightbox-name').textContent=sc.name||lbCurrentCard.name||'';
+  document.getElementById('flipInner').classList.remove('flipped');
+  lbResetTilt();
+}
+
+// ── LIGHTBOX CARD TILT (efecto carta) ──
+const lbCard=document.getElementById('lightbox-card');
+const lbName=document.getElementById('lightbox-name');
+const LB_MAX_TILT=10; // grados máximos, movimiento leve
+
+function lbHandleMove(e){
+  const rect=lbCard.getBoundingClientRect();
+  if(!rect.width||!rect.height)return;
+  const px=Math.min(1,Math.max(0,(e.clientX-rect.left)/rect.width));
+  const py=Math.min(1,Math.max(0,(e.clientY-rect.top)/rect.height));
+  const rotY=(px-0.5)*LB_MAX_TILT*2;
+  const rotX=(0.5-py)*LB_MAX_TILT*2;
+  lbCard.classList.add('tilting');
+  lbCard.style.transform=`rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.015)`;
+  lbCard.style.setProperty('--mx',(px*100)+'%');
+  lbCard.style.setProperty('--my',(py*100)+'%');
+  lbName.classList.add('shining');
+  lbName.style.setProperty('--shine',(px*160-40)+'%');
+}
+function lbResetTilt(){
+  lbCard.classList.remove('tilting');
+  lbCard.style.transform='rotateX(0deg) rotateY(0deg) scale(1)';
+  lbName.classList.remove('shining');
+}
+document.getElementById('lightbox').addEventListener('mousemove',e=>{if(document.getElementById('lightbox').classList.contains('open'))lbHandleMove(e);});
+document.getElementById('lightbox').addEventListener('mouseleave',lbResetTilt);
+
+// ── CARDS MANAGEMENT ──
+function openAddCards(){pendingFiles=[];document.getElementById('uploadList').innerHTML='';document.getElementById('cardsInput').value='';document.getElementById('addCardsModal').classList.add('open');}
+function closeAddCards(){document.getElementById('addCardsModal').classList.remove('open');}
+function handleCardsUpload(input){
+  Array.from(input.files).forEach(file=>{b64(file,src=>{pendingFiles.push({name:file.name.replace(/\.[^/.]+$/,''),src,tempId:uid()});renderUploadList();});});
+}
+function renderUploadList(){
+  const ul=document.getElementById('uploadList');ul.innerHTML='';
+  pendingFiles.forEach((item,i)=>{const li=document.createElement('li');li.innerHTML=`<img src="${item.src}" alt=""><div class="uname"><span contenteditable="true" onblur="renamePending(${i},this.textContent)">${item.name}</span>Nombre interno</div><button onclick="removePending(${i})">✕</button>`;ul.appendChild(li);});
+}
+function renamePending(i,v){if(pendingFiles[i])pendingFiles[i].name=v.trim()||pendingFiles[i].name;}
+function removePending(i){pendingFiles.splice(i,1);renderUploadList();}
+function confirmAddCards(){
+  if(!pendingFiles.length){toast('No hay imágenes seleccionadas.');return;}
+  const c=getActiveContainer();
+  pendingFiles.forEach(f=>c.cards.push({id:uid(),name:f.name,src:f.src,span:1,dateDay:null,dateMonth:null,dateYear:null,year:null,rating:null,labelIds:[],flipEnabled:false,backSrc:null,subCards:[]}));
+  save();closeAddCards();toast(`✅ ${pendingFiles.length} tarjeta(s) añadida(s)`);pendingFiles=[];renderGrid();
+}
+function deleteCard(cardId,e){e.stopPropagation();const c=getActiveContainer();c.cards=c.cards.filter(x=>x.id!==cardId);c.cardOrder=(c.cardOrder||[]).filter(id=>id!==cardId);save();renderGrid();}
+
+// ── EDIT CARD ──
+// ── DATE SPINNERS ──
+const MONTHS_LONG=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MONTHS_SHORT=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+let spinState={day:null,month:null,year:null}; // null = not set
+
+function spinDate(field,delta){
+  if(field==='day'){
+    const cur=spinState.day??1;
+    spinState.day=Math.min(31,Math.max(1,(cur+delta)));
+    document.getElementById('spinDay').value=String(spinState.day).padStart(2,'0');
+  } else if(field==='month'){
+    const cur=spinState.month??1;
+    spinState.month=Math.min(12,Math.max(1,(cur+delta)));
+    document.getElementById('spinMonth').value=MONTHS_SHORT[spinState.month-1];
+  } else if(field==='year'){
+    const cur=spinState.year??2000;
+    spinState.year=Math.min(2100,Math.max(1930,(cur+delta)));
+    document.getElementById('spinYear').value=String(spinState.year);
+  }
+  refreshDateDisplay();
+}
+
+function onSpinInput(field,val){
+  val=val.trim();
+  if(field==='day'){
+    const n=parseInt(val);
+    if(!isNaN(n)&&n>=1&&n<=31){spinState.day=n;}
+    else if(val===''){spinState.day=null;}
+  } else if(field==='month'){
+    // try number
+    const n=parseInt(val);
+    if(!isNaN(n)&&n>=1&&n<=12){spinState.month=n;document.getElementById('spinMonth').value=MONTHS_SHORT[n-1];}
+    else {
+      // try name match
+      const idx=MONTHS_LONG.findIndex(m=>m.toLowerCase().startsWith(val.toLowerCase()));
+      if(idx>=0){spinState.month=idx+1;}
+      else if(val===''){spinState.month=null;}
+    }
+  } else if(field==='year'){
+    const n=parseInt(val);
+    if(!isNaN(n)&&n>=1930&&n<=2100){spinState.year=n;}
+    else if(val===''){spinState.year=null;}
+  }
+  refreshDateDisplay();
+}
+
+function refreshDateDisplay(){
+  const d=spinState.day,m=spinState.month,y=spinState.year;
+  if(d===null&&m===null&&y===null){
+    document.getElementById('ecDateDisplay').textContent='Sin fecha';
+  } else {
+    const ds=d!==null?String(d).padStart(2,'0'):'--';
+    const ms=m!==null?MONTHS_SHORT[m-1]:'---';
+    const ys=y!==null?String(y):'----';
+    document.getElementById('ecDateDisplay').textContent=`${ds} ${ms} ${ys}`;
+  }
+}
+
+function clearDate(){
+  spinState={day:null,month:null,year:null};
+  document.getElementById('spinDay').value='';
+  document.getElementById('spinMonth').value='';
+  document.getElementById('spinYear').value='';
+  refreshDateDisplay();
+}
+
+function clearRating(){
+  currentEditRating=null;
+  document.getElementById('ecRatingNum').textContent='—';
+  document.getElementById('ecRatingNum').style.color='var(--text-dim)';
+  document.getElementById('ecRatingLabel').textContent='Sin valorar';
+  document.querySelectorAll('.ec-rating-btn').forEach(btn=>{
+    const bv=parseInt(btn.dataset.val);
+    const c=RATING_COLORS[bv]||'#888';
+    btn.classList.remove('active');
+    btn.style.background=c+'22';
+  });
+}
+
+const RATING_COLORS=['#c0392b','#c0392b','#e05a2b','#e07a2b','#e0a030','#d4b030','#b8c030','#80b830','#50b040','#30a840','#20a020'];
+const RATING_LABELS=['','Horrible','Muy malo','Malo','Regular','Mediocre','Bien','Bueno','Muy bueno','Excelente','Obra maestra'];
+let currentEditRating=null;
+
+function buildRatingButtons(){
+  const container=document.getElementById('ecRatingNums');container.innerHTML='';
+  for(let i=1;i<=10;i++){
+    const btn=document.createElement('button');btn.className='ec-rating-btn';btn.type='button';
+    btn.textContent=i;btn.dataset.val=i;
+    const col=RATING_COLORS[i]||'#888';
+    btn.style.background=col+'22';btn.style.color=col;
+    btn.addEventListener('click',()=>setRating(i));
+    container.appendChild(btn);
+  }
+}
+
+function setRating(v){
+  currentEditRating=v;
+  const col=RATING_COLORS[v]||'#888';
+  const numEl=document.getElementById('ecRatingNum');
+  numEl.textContent=v;numEl.style.color=col;
+  document.getElementById('ecRatingLabel').textContent=RATING_LABELS[v]||'';
+  document.querySelectorAll('.ec-rating-btn').forEach(btn=>{
+    const bv=parseInt(btn.dataset.val);
+    btn.classList.toggle('active',bv===v);
+    const c=RATING_COLORS[bv]||'#888';
+    btn.style.background=bv<=v?c+'55':c+'22';
+  });
+}
+
+function updateSpanDisplay(){
+  const v=parseFloat(document.getElementById('editCardSpan').value);
+  document.getElementById('ecSpanVal').textContent=`×${v.toFixed(1)}`;
+}
+
+function openEditCard(cardId,e){
+  e.stopPropagation();
+  const c=getActiveContainer();const card=c.cards.find(x=>x.id===cardId);
+  editingCardId=cardId;
+  const col=getCol(currentColId);const accent=col.accent||'#D4AF37';
+  // Style header with accent
+  const hdr=document.getElementById('ecHeader');hdr.style.background=accent;
+  document.getElementById('editCardModal').style.setProperty('--ec-accent',accent);
+  document.getElementById('ecSaveBtn').style.background=accent;
+  // Imagen de la tarjeta
+  document.getElementById('cardImgPreview').src=card.src;
+  document.getElementById('cardImgPreview').style.display='block';
+  document.getElementById('cardImgHint').style.display='none';
+  // Name
+  document.getElementById('editCardName').value=card.name||'';
+  // Date spinners
+  spinState={day:card.dateDay||null,month:card.dateMonth||null,year:card.dateYear||null};
+  document.getElementById('spinDay').value=spinState.day!==null?String(spinState.day).padStart(2,'0'):'';
+  document.getElementById('spinMonth').value=spinState.month!==null?MONTHS_SHORT[spinState.month-1]:'';
+  document.getElementById('spinYear').value=spinState.year!==null?String(spinState.year):'';
+  refreshDateDisplay();
+  // Rating
+  buildRatingButtons();
+  if(card.rating!=null){setRating(card.rating);}
+  else{currentEditRating=null;document.getElementById('ecRatingNum').textContent='—';document.getElementById('ecRatingNum').style.color='var(--text-dim)';document.getElementById('ecRatingLabel').textContent='Sin valorar';}
+  // Span
+  const span=card.span||1;document.getElementById('editCardSpan').value=span;updateSpanDisplay();
+  // Labels
+  const allLabels=col.labels||[];
+  const assignList=document.getElementById('labelsAssignList');assignList.innerHTML='';
+  document.getElementById('ecLabelTypeLabel').textContent=(col.labelTypeName||'Etiquetas')+' (toca para asignar)';
+  if(allLabels.length){
+    allLabels.forEach(lbl=>{
+      const assigned=(card.labelIds||[]).includes(lbl.id);
+      const chip=document.createElement('div');chip.className='label-chip';chip.style.cursor='pointer';
+      const color=lbl.color||accent;
+      if(assigned){chip.style.background=color;chip.style.color='#000';chip.style.borderColor=color;}
+      else{chip.style.background=color+'22';chip.style.color=color;chip.style.borderColor=color+'55';}
+      chip.textContent=lbl.name;
+      chip.addEventListener('click',()=>{
+        const card2=c.cards.find(x=>x.id===editingCardId);if(!card2)return;
+        if(!card2.labelIds)card2.labelIds=[];
+        if(card2.labelIds.includes(lbl.id)){
+          card2.labelIds=card2.labelIds.filter(x=>x!==lbl.id);
+          chip.style.background=color+'22';chip.style.color=color;chip.style.borderColor=color+'55';
+        } else {
+          card2.labelIds.push(lbl.id);
+          chip.style.background=color;chip.style.color='#000';chip.style.borderColor=color;
+        }
+        save();
+      });
+      assignList.appendChild(chip);
+    });
+    document.getElementById('labelsAssignGroup').style.display='';
+  } else {
+    document.getElementById('labelsAssignGroup').style.display='none';
+  }
+  // Flip / reverso
+  if(!card.subCards)card.subCards=[];
+  setCardFlip(!!card.flipEnabled,true);
+  showBackThumb(card.backSrc||null);
+  renderSubCardsList();
+  document.getElementById('editCardModal').classList.add('open');
+}
+function closeEditCard(){document.getElementById('editCardModal').classList.remove('open');editingCardId=null;}
+function confirmEditCard(){
+  const name=document.getElementById('editCardName').value.trim();
+  const dateDay=spinState.day;
+  const dateMonth=spinState.month;
+  const dateYear=spinState.year;
+  const rating=currentEditRating; // null if not set
+  const span=parseFloat(document.getElementById('editCardSpan').value)||1;
+  const c=getActiveContainer();const card=c.cards.find(x=>x.id===editingCardId);
+  if(card){
+    if(name)card.name=name;
+    card.dateDay=dateDay;card.dateMonth=dateMonth;card.dateYear=dateYear;
+    card.year=dateYear; // legacy for sort
+    card.rating=rating;card.span=span;
+    save();if(currentTab==='cards')renderGrid();else renderLabelsTab();
+  }
+  closeEditCard();
+}
+document.getElementById('editCardName').addEventListener('keydown',e=>{if(e.key==='Enter')closeEditCard();});
+
+// ── FLIP / REVERSO DE LA CARTA ──
+function getEditingCard(){const c=getActiveContainer();return c.cards.find(x=>x.id===editingCardId);}
+function setCardFlip(enabled,skipSave){
+  const card=getEditingCard();
+  if(card&&!skipSave){card.flipEnabled=enabled;save();}
+  document.getElementById('flipOffBtn').classList.toggle('active',!enabled);
+  document.getElementById('flipOnBtn').classList.toggle('active',enabled);
+  document.getElementById('flipDetailGroup').style.display=enabled?'flex':'none';
+}
+function showBackThumb(src){
+  const img=document.getElementById('backImgPreview');const hint=document.getElementById('backImgHint');
+  if(src){img.src=src;img.style.display='block';hint.style.display='none';}
+  else{img.style.display='none';img.src='';hint.style.display='block';}
+}
+function previewBackImg(input){
+  if(!input.files[0])return;
+  b64(input.files[0],src=>{
+    const card=getEditingCard();if(!card)return;
+    card.backSrc=src;save();showBackThumb(src);
+  });
+}
+function previewCardImg(input){
+  if(!input.files[0])return;
+  b64(input.files[0],src=>{
+    const card=getEditingCard();if(!card)return;
+    card.src=src;save();
+    document.getElementById('cardImgPreview').src=src;
+    document.getElementById('cardImgPreview').style.display='block';
+    document.getElementById('cardImgHint').style.display='none';
+    renderGrid(); // refleja el cambio al momento en la cuadrícula, detrás del modal
+    toast('✅ Imagen de la tarjeta reemplazada');
+  });
+}
+function addSubCard(){
+  const card=getEditingCard();if(!card)return;
+  if(!card.subCards)card.subCards=[];
+  card.subCards.push({id:uid(),name:'',stripSrc:null,cardSrc:null});
+  save();renderSubCardsList();
+}
+function removeSubCard(scId){
+  const card=getEditingCard();if(!card)return;
+  card.subCards=(card.subCards||[]).filter(s=>s.id!==scId);
+  save();renderSubCardsList();
+}
+function moveSubCard(scId,dir){
+  const card=getEditingCard();if(!card||!card.subCards)return;
+  const arr=card.subCards;const i=arr.findIndex(s=>s.id===scId);
+  const j=i+dir;if(i<0||j<0||j>=arr.length)return;
+  [arr[i],arr[j]]=[arr[j],arr[i]];
+  save();renderSubCardsList();
+}
+function updateSubCardName(scId,val){
+  const card=getEditingCard();if(!card)return;
+  const sc=(card.subCards||[]).find(s=>s.id===scId);if(sc){sc.name=val;save();}
+}
+function previewSubStrip(scId,input){
+  if(!input.files[0])return;
+  b64(input.files[0],src=>{
+    const card=getEditingCard();if(!card)return;
+    const sc=(card.subCards||[]).find(s=>s.id===scId);if(!sc)return;
+    sc.stripSrc=src;sc.stripW=null;sc.stripH=null;
+    const im=new Image();
+    im.onload=()=>{sc.stripW=im.naturalWidth;sc.stripH=im.naturalHeight;save();renderSubCardsList();};
+    im.onerror=()=>{save();renderSubCardsList();};
+    im.src=src;
+  });
+}
+function previewSubCardImg(scId,input){
+  if(!input.files[0])return;
+  b64(input.files[0],src=>{
+    const card=getEditingCard();if(!card)return;
+    const sc=(card.subCards||[]).find(s=>s.id===scId);if(!sc)return;
+    sc.cardSrc=src;save();renderSubCardsList();
+  });
+}
+function renderSubCardsList(){
+  const card=getEditingCard();
+  const wrap=document.getElementById('subCardsList');wrap.innerHTML='';
+  const subs=(card&&card.subCards)||[];
+  if(!subs.length){
+    wrap.innerHTML=`<div style="font-size:11px;color:var(--text-dim);text-align:center;padding:8px 0">Sin temporadas. Pulsa «+ Añadir».</div>`;
+    return;
+  }
+  subs.forEach((sc,i)=>{
+    const row=document.createElement('div');row.className='subcard-row';
+    row.innerHTML=`
+      <div class="subcard-row-top">
+        <input type="text" placeholder="Ej: Temporada ${i+1}" value="${sc.name||''}">
+        <button type="button" class="sc-mini-btn" title="Subir" ${i===0?'disabled style="opacity:.3"':''}>▲</button>
+        <button type="button" class="sc-mini-btn" title="Bajar" ${i===subs.length-1?'disabled style="opacity:.3"':''}>▼</button>
+        <button type="button" class="sc-mini-btn" title="Eliminar">✕</button>
+      </div>
+      <div class="sc-uploads-row">
+        <div class="sc-upload strip">
+          ${sc.stripSrc?`<img src="${sc.stripSrc}">`:`<span>Franja índice (horizontal)</span>`}
+          <input type="file" accept="image/*">
+        </div>
+        <div class="sc-upload full">
+          ${sc.cardSrc?`<img src="${sc.cardSrc}">`:`<span>Carta completa (vertical)</span>`}
+          <input type="file" accept="image/*">
+        </div>
+      </div>`;
+    const [nameInput]=row.querySelectorAll('input[type="text"]');
+    nameInput.addEventListener('input',()=>updateSubCardName(sc.id,nameInput.value));
+    const [upBtn,downBtn,delBtn]=row.querySelectorAll('.sc-mini-btn');
+    upBtn.addEventListener('click',()=>moveSubCard(sc.id,-1));
+    downBtn.addEventListener('click',()=>moveSubCard(sc.id,1));
+    delBtn.addEventListener('click',()=>{if(confirm('¿Eliminar esta temporada del índice?'))removeSubCard(sc.id);});
+    const [stripInput,cardInput]=row.querySelectorAll('.sc-upload input[type="file"]');
+    stripInput.addEventListener('change',()=>previewSubStrip(sc.id,stripInput));
+    cardInput.addEventListener('change',()=>previewSubCardImg(sc.id,cardInput));
+    wrap.appendChild(row);
+  });
+}
+
+// ── SECTION MODAL ──
+function openNewSection(){editingSecId=null;secImgPending=null;document.getElementById('sectionModalTitle').textContent='Nueva Sección';document.getElementById('sectionName').value='';document.getElementById('sectionEmoji').value='';resetSecThumb();document.getElementById('secDeleteBtn').style.display='none';document.getElementById('sectionModal').classList.add('open');setTimeout(()=>document.getElementById('sectionName').focus(),50);}
+function openEditSection(secId){const col=getCol(currentColId);const sec=getSec(col,secId);editingSecId=secId;secImgPending=sec.coverSrc||null;document.getElementById('sectionModalTitle').textContent='Editar Sección';document.getElementById('sectionName').value=sec.name;document.getElementById('sectionEmoji').value=sec.emoji||'';if(sec.coverSrc)showSecThumb(sec.coverSrc);else resetSecThumb();document.getElementById('secDeleteBtn').style.display='block';document.getElementById('sectionModal').classList.add('open');}
+function closeSectionModal(){document.getElementById('sectionModal').classList.remove('open');editingSecId=null;secImgPending=null;}
+function previewSecImg(input){if(!input.files[0])return;b64(input.files[0],src=>{secImgPending=src;showSecThumb(src);});}
+function showSecThumb(src){document.getElementById('secThumbPreview').src=src;document.getElementById('secThumbPreview').style.display='block';document.getElementById('secUploadLabel').textContent='Cambiar imagen';}
+function resetSecThumb(){document.getElementById('secThumbPreview').style.display='none';document.getElementById('secThumbPreview').src='';document.getElementById('secUploadLabel').textContent='Clic o arrastra';document.getElementById('secImgInput').value='';}
+function saveSection(){
+  const name=document.getElementById('sectionName').value.trim();if(!name){document.getElementById('sectionName').focus();return;}
+  const emoji=document.getElementById('sectionEmoji').value.trim()||'📁';
+  const col=getCol(currentColId);if(!col.sections)col.sections=[];
+  if(editingSecId){const sec=getSec(col,editingSecId);sec.name=name;sec.emoji=emoji;if(secImgPending!==undefined)sec.coverSrc=secImgPending;}
+  else{col.sections.push({id:uid(),name,emoji,coverSrc:secImgPending||null,cards:[],sortMode:'custom',cardOrder:[]});}
+  save();renderSectionsPage();closeSectionModal();toast(editingSecId?'✅ Sección actualizada':'✅ Sección creada');
+}
+function deleteSection(){if(!editingSecId)return;if(!confirm('¿Eliminar sección y sus tarjetas?'))return;const col=getCol(currentColId);col.sections=col.sections.filter(s=>s.id!==editingSecId);save();renderSectionsPage();closeSectionModal();toast('🗑️ Sección eliminada');}
+
+// ── COLLECTION MODAL ──
+function buildColorSwatches(){
+  const c=document.getElementById('catSwatches');PRESET_COLORS.forEach(col=>{const sw=document.createElement('div');sw.className='swatch';sw.style.background=col;sw.dataset.color=col;sw.addEventListener('click',()=>{catAccentPend=col;document.getElementById('catColorPicker').value=col;c.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));sw.classList.add('active');});c.appendChild(sw);});
+  document.getElementById('catColorPicker').addEventListener('input',function(){catAccentPend=this.value;document.getElementById('catSwatches').querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));});
+}
+function setSwatchActive(color){catAccentPend=color;try{document.getElementById('catColorPicker').value=color;}catch(e){}document.getElementById('catSwatches').querySelectorAll('.swatch').forEach(s=>s.classList.toggle('active',s.dataset.color===color));}
+function setTypeBtn(hasSec){catHasSec=hasSec;document.getElementById('typeWithSections').classList.toggle('active',hasSec);document.getElementById('typeNoSections').classList.toggle('active',!hasSec);}
+function openNewCol(){editingColId=null;catImgPending=null;document.getElementById('catModalTitle').textContent='Nueva Colección';document.getElementById('catName').value='';document.getElementById('catEmoji').value='';document.getElementById('catLabelType').value='';resetCatThumb();setSwatchActive('#D4AF37');setTypeBtn(true);document.getElementById('catDeleteBtn').style.display='none';document.getElementById('catModal').classList.add('open');setTimeout(()=>document.getElementById('catName').focus(),50);}
+function openEditCol(id){editingColId=id;const col=getCol(id);catImgPending=col.coverSrc||null;document.getElementById('catModalTitle').textContent='Editar Colección';document.getElementById('catName').value=col.name;document.getElementById('catEmoji').value=col.emoji||'';document.getElementById('catLabelType').value=col.labelTypeName||'';setSwatchActive(col.accent||'#D4AF37');setTypeBtn(col.hasSections!==false);if(col.coverSrc)showCatThumb(col.coverSrc);else resetCatThumb();document.getElementById('catDeleteBtn').style.display='block';document.getElementById('catModal').classList.add('open');}
+function closeCatModal(){document.getElementById('catModal').classList.remove('open');editingColId=null;catImgPending=null;}
+function previewCatImg(input){if(!input.files[0])return;b64(input.files[0],src=>{catImgPending=src;showCatThumb(src);});}
+function showCatThumb(src){document.getElementById('catThumbPreview').src=src;document.getElementById('catThumbPreview').style.display='block';document.getElementById('catUploadLabel').textContent='Cambiar imagen';}
+function resetCatThumb(){document.getElementById('catThumbPreview').style.display='none';document.getElementById('catThumbPreview').src='';document.getElementById('catUploadLabel').textContent='Clic o arrastra';document.getElementById('catImgInput').value='';}
+function saveCollection(){
+  const name=document.getElementById('catName').value.trim();if(!name){document.getElementById('catName').focus();return;}
+  const emoji=document.getElementById('catEmoji').value.trim()||'📁';
+  const accent=catAccentPend||'#D4AF37';
+  const labelTypeName=document.getElementById('catLabelType').value.trim()||'Etiqueta';
+  if(editingColId){const col=getCol(editingColId);col.name=name;col.emoji=emoji;col.accent=accent;col.hasSections=catHasSec;col.labelTypeName=labelTypeName;if(catImgPending!==undefined)col.coverSrc=catImgPending;if(catHasSec&&!col.sections)col.sections=[];}
+  else{state.collections.push({id:uid(),name,emoji,coverSrc:catImgPending||null,accent,hasSections:catHasSec,labelTypeName,labels:[],sections:catHasSec?[]:[],cards:[],sortMode:'custom',cardOrder:[]});}
+  save();renderHome();closeCatModal();toast(editingColId?'✅ Colección actualizada':'✅ Colección creada');
+}
+function deleteCollection(){if(!editingColId)return;if(!confirm('¿Eliminar colección y todo su contenido?'))return;state.collections=state.collections.filter(c=>c.id!==editingColId);save();renderHome();closeCatModal();toast('🗑️ Colección eliminada');}
+
+// close modals on bg
+document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
+</script>
+</body>
+</html>
